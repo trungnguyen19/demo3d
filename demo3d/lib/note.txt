@@ -1,0 +1,3 @@
+all *.jar to jre/lib/ext
+all *.so to jre/lib/i386
+https://code.google.com/p/processing/source/browse/trunk/processing/java/libraries/?r=7649
