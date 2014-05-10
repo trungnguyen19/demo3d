@@ -1,18 +1,3 @@
-import java.awt.*;
-import java.awt.event.*;
-import java.io.IOException;
-import javax.swing.*;
-import javax.media.opengl.GL2;
-import javax.media.opengl.GLAutoDrawable;
-import javax.media.opengl.GLEventListener;
-import javax.media.opengl.GLException;
-import javax.media.opengl.awt.GLCanvas;
-import javax.media.opengl.glu.GLU;
-import javax.media.opengl.glu.GLUquadric;
-import com.jogamp.opengl.util.FPSAnimator;
-import com.jogamp.opengl.util.texture.Texture;
-import com.jogamp.opengl.util.texture.TextureCoords;
-import com.jogamp.opengl.util.texture.TextureIO;
 import static java.awt.event.KeyEvent.VK_A;
 import static java.awt.event.KeyEvent.VK_DOWN;
 import static java.awt.event.KeyEvent.VK_LEFT;
@@ -21,16 +6,96 @@ import static java.awt.event.KeyEvent.VK_PAGE_UP;
 import static java.awt.event.KeyEvent.VK_RIGHT;
 import static java.awt.event.KeyEvent.VK_UP;
 import static java.awt.event.KeyEvent.VK_Z;
-import static javax.media.opengl.GL.*; // GL constants
-import static javax.media.opengl.GL2.*; // GL2 constants
-import static javax.media.opengl.GL2ES1.GL_CLIP_PLANE0;
-import static javax.media.opengl.GL2ES1.GL_TEXTURE_GEN_MODE;
-import static javax.media.opengl.fixedfunc.GLLightingFunc.GL_AMBIENT;
-import static javax.media.opengl.fixedfunc.GLLightingFunc.GL_DIFFUSE;
-import static javax.media.opengl.fixedfunc.GLLightingFunc.GL_LIGHT0;
-import static javax.media.opengl.fixedfunc.GLLightingFunc.GL_LIGHTING;
-import static javax.media.opengl.fixedfunc.GLLightingFunc.GL_POSITION;
-import static javax.media.opengl.fixedfunc.GLLightingFunc.GL_SMOOTH;
+import static javax.media.opengl.GL.GL_ALWAYS;
+import static javax.media.opengl.GL.GL_AMBIENT;
+import static javax.media.opengl.GL.GL_BLEND;
+import static javax.media.opengl.GL.GL_CLIP_PLANE0;
+import static javax.media.opengl.GL.GL_COLOR_BUFFER_BIT;
+import static javax.media.opengl.GL.GL_DEPTH_BUFFER_BIT;
+import static javax.media.opengl.GL.GL_DEPTH_TEST;
+import static javax.media.opengl.GL.GL_DIFFUSE;
+import static javax.media.opengl.GL.GL_EQUAL;
+import static javax.media.opengl.GL.GL_KEEP;
+import static javax.media.opengl.GL.GL_LEQUAL;
+import static javax.media.opengl.GL.GL_LIGHT0;
+import static javax.media.opengl.GL.GL_LIGHTING;
+import static javax.media.opengl.GL.GL_LINEAR;
+import static javax.media.opengl.GL.GL_MODELVIEW;
+import static javax.media.opengl.GL.GL_NICEST;
+import static javax.media.opengl.GL.GL_ONE;
+import static javax.media.opengl.GL.GL_ONE_MINUS_SRC_ALPHA;
+import static javax.media.opengl.GL.GL_PERSPECTIVE_CORRECTION_HINT;
+import static javax.media.opengl.GL.GL_POSITION;
+import static javax.media.opengl.GL.GL_PROJECTION;
+import static javax.media.opengl.GL.GL_QUADS;
+import static javax.media.opengl.GL.GL_REPLACE;
+import static javax.media.opengl.GL.GL_S;
+import static javax.media.opengl.GL.GL_SMOOTH;
+import static javax.media.opengl.GL.GL_SPHERE_MAP;
+import static javax.media.opengl.GL.GL_SRC_ALPHA;
+import static javax.media.opengl.GL.GL_STENCIL_TEST;
+import static javax.media.opengl.GL.GL_T;
+import static javax.media.opengl.GL.GL_TEXTURE_2D;
+import static javax.media.opengl.GL.GL_TEXTURE_GEN_MODE;
+import static javax.media.opengl.GL.GL_TEXTURE_GEN_S;
+import static javax.media.opengl.GL.GL_TEXTURE_GEN_T;
+import static javax.media.opengl.GL.GL_TEXTURE_MAG_FILTER;
+import static javax.media.opengl.GL.GL_TEXTURE_MIN_FILTER;
+
+import java.awt.Dimension;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.IOException;
+
+import javax.media.opengl.GL;
+import javax.media.opengl.GLAutoDrawable;
+import javax.media.opengl.GLCanvas;
+import javax.media.opengl.GLEventListener;
+import javax.media.opengl.GLException;
+import javax.media.opengl.glu.GLU;
+import javax.media.opengl.glu.GLUquadric;
+import javax.swing.JFrame;
+
+import com.sun.opengl.util.FPSAnimator;
+import com.sun.opengl.util.texture.Texture;
+import com.sun.opengl.util.texture.TextureCoords;
+import com.sun.opengl.util.texture.TextureIO;
+
+//import java.awt.*;
+//import java.awt.event.*;
+//import java.io.IOException;
+//import javax.swing.*;
+//import javax.media.opengl.GL2;
+//import javax.media.opengl.GLAutoDrawable;
+//import javax.media.opengl.GLEventListener;
+//import javax.media.opengl.GLException;
+//import javax.media.opengl.awt.GLCanvas;
+//import javax.media.opengl.glu.GLU;
+//import javax.media.opengl.glu.GLUquadric;
+//import com.jogamp.opengl.util.FPSAnimator;
+//import com.jogamp.opengl.util.texture.Texture;
+//import com.jogamp.opengl.util.texture.TextureCoords;
+//import com.jogamp.opengl.util.texture.TextureIO;
+//import static java.awt.event.KeyEvent.VK_A;
+//import static java.awt.event.KeyEvent.VK_DOWN;
+//import static java.awt.event.KeyEvent.VK_LEFT;
+//import static java.awt.event.KeyEvent.VK_PAGE_DOWN;
+//import static java.awt.event.KeyEvent.VK_PAGE_UP;
+//import static java.awt.event.KeyEvent.VK_RIGHT;
+//import static java.awt.event.KeyEvent.VK_UP;
+//import static java.awt.event.KeyEvent.VK_Z;
+//import static javax.media.opengl.GL.*; // GL constants
+//import static javax.media.opengl.GL2.*; // GL2 constants
+//import static javax.media.opengl.GL2ES1.GL_CLIP_PLANE0;
+//import static javax.media.opengl.GL2ES1.GL_TEXTURE_GEN_MODE;
+//import static javax.media.opengl.fixedfunc.GLLightingFunc.GL_AMBIENT;
+//import static javax.media.opengl.fixedfunc.GLLightingFunc.GL_DIFFUSE;
+//import static javax.media.opengl.fixedfunc.GLLightingFunc.GL_LIGHT0;
+//import static javax.media.opengl.fixedfunc.GLLightingFunc.GL_LIGHTING;
+//import static javax.media.opengl.fixedfunc.GLLightingFunc.GL_POSITION;
+//import static javax.media.opengl.fixedfunc.GLLightingFunc.GL_SMOOTH;
 
 /**
  * NeHe Lesson #26: Clipping and Reflection using the stencil Buffer
@@ -126,7 +191,7 @@ public class JOGL2Nehe26Reflection implements GLEventListener, KeyListener {
 	 * used to perform one-time initialization. Run only once.
 	 */
 	public void init(GLAutoDrawable drawable) {
-		GL2 gl = drawable.getGL().getGL2(); // get the OpenGL graphics context
+		GL gl = drawable.getGL();
 		glu = new GLU(); // get GL Utilities
 		gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // set background (clear) color
 		gl.glClearDepth(1.0f); // set clear depth value to farthest
@@ -202,7 +267,7 @@ public class JOGL2Nehe26Reflection implements GLEventListener, KeyListener {
 	 */
 	public void reshape(GLAutoDrawable drawable, int x, int y, int width,
 			int height) {
-		GL2 gl = drawable.getGL().getGL2(); // get the OpenGL 2 graphics context
+		GL gl = drawable.getGL();
 
 		if (height == 0)
 			height = 1; // prevent divide by zero
@@ -226,7 +291,7 @@ public class JOGL2Nehe26Reflection implements GLEventListener, KeyListener {
 	 * Called back by the animator to perform rendering.
 	 */
 	public void display(GLAutoDrawable drawable) {
-		GL2 gl = drawable.getGL().getGL2(); // get the OpenGL 2 graphics context
+		GL gl = drawable.getGL();
 		gl.glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear color
 																// and depth
 																// buffers
@@ -312,13 +377,13 @@ public class JOGL2Nehe26Reflection implements GLEventListener, KeyListener {
 	}
 
 	// Render the beach ball by drawing two fully overlapped spheres
-	private void drawBall(GL2 gl) {
+	private void drawBall(GL gl) {
 		// draw the first sphere with texture "ball"
 		gl.glColor3f(1.0f, 1.0f, 1.0f); // Set color to white
-		textures[1].enable(gl);
-		textures[1].bind(gl);
+		textures[1].enable();
+		textures[1].bind();
 		glu.gluSphere(quadric, 0.35f, 32, 16); // Draw first sphere
-		textures[1].disable(gl);
+		textures[1].disable();
 
 		// Draw the second sphere using texture "EnvRoll", set the alpha value
 		// to 40%
@@ -331,8 +396,8 @@ public class JOGL2Nehe26Reflection implements GLEventListener, KeyListener {
 		// even as the ball spins.
 		// We blend so that the new texture doesn't cancel out the old texture
 		// (a form of multi-texturing).
-		textures[2].enable(gl);
-		textures[2].bind(gl);
+		textures[2].enable();
+		textures[2].bind();
 		gl.glColor4f(1.0f, 1.0f, 1.0f, 0.4f); // Set color to white with 40%
 												// alpha
 		gl.glEnable(GL_BLEND); // Enable blending
@@ -346,13 +411,13 @@ public class JOGL2Nehe26Reflection implements GLEventListener, KeyListener {
 		gl.glDisable(GL_TEXTURE_GEN_S); // Disable sphere mapping
 		gl.glDisable(GL_TEXTURE_GEN_T); // Disable sphere mapping
 		gl.glDisable(GL_BLEND);
-		textures[2].disable(gl);
+		textures[2].disable();
 	}
 
 	// Render the floor
-	private void drawFloor(GL2 gl) {
-		textures[0].enable(gl); // "evnwall"
-		textures[0].bind(gl);
+	private void drawFloor(GL gl) {
+		textures[0].enable(); // "evnwall"
+		textures[0].bind();
 		gl.glBegin(GL_QUADS);
 		gl.glNormal3f(0.0f, 1.0f, 0.0f); // Normal pointing up
 		gl.glTexCoord2f(textureLefts[0], textureBottoms[0]); // Bottom-left of
@@ -409,5 +474,10 @@ public class JOGL2Nehe26Reflection implements GLEventListener, KeyListener {
 	}
 
 	public void keyTyped(KeyEvent e) {
+	}
+
+	public void displayChanged(GLAutoDrawable arg0, boolean arg1, boolean arg2) {
+		// TODO Auto-generated method stub
+
 	}
 }

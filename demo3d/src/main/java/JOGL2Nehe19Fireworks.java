@@ -1,22 +1,60 @@
-import java.awt.*;
-import java.awt.event.*;
+import static java.awt.event.KeyEvent.VK_T;
+import static javax.media.opengl.GL.GL_BLEND;
+import static javax.media.opengl.GL.GL_COLOR_BUFFER_BIT;
+import static javax.media.opengl.GL.GL_DEPTH_BUFFER_BIT;
+import static javax.media.opengl.GL.GL_LINEAR;
+import static javax.media.opengl.GL.GL_MODELVIEW;
+import static javax.media.opengl.GL.GL_NICEST;
+import static javax.media.opengl.GL.GL_ONE;
+import static javax.media.opengl.GL.GL_PERSPECTIVE_CORRECTION_HINT;
+import static javax.media.opengl.GL.GL_POINT_SMOOTH_HINT;
+import static javax.media.opengl.GL.GL_PROJECTION;
+import static javax.media.opengl.GL.GL_SMOOTH;
+import static javax.media.opengl.GL.GL_SRC_ALPHA;
+import static javax.media.opengl.GL.GL_TEXTURE_2D;
+import static javax.media.opengl.GL.GL_TEXTURE_MAG_FILTER;
+import static javax.media.opengl.GL.GL_TEXTURE_MIN_FILTER;
+import static javax.media.opengl.GL.GL_TRIANGLE_STRIP;
+
+import java.awt.Dimension;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.util.Random;
-import javax.swing.*;
-import javax.media.opengl.GL2;
+
+import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
+import javax.media.opengl.GLCanvas;
 import javax.media.opengl.GLEventListener;
 import javax.media.opengl.GLException;
-import javax.media.opengl.awt.GLCanvas;
 import javax.media.opengl.glu.GLU;
-import com.jogamp.opengl.util.FPSAnimator;
-import com.jogamp.opengl.util.texture.Texture;
-import com.jogamp.opengl.util.texture.TextureCoords;
-import com.jogamp.opengl.util.texture.TextureIO;
-import static java.awt.event.KeyEvent.VK_T;
-import static javax.media.opengl.GL.*; // GL constants
-import static javax.media.opengl.GL2.*; // GL2 constants
-import static javax.media.opengl.GL2ES1.GL_POINT_SMOOTH_HINT;
+import javax.swing.JFrame;
+
+import com.sun.opengl.util.FPSAnimator;
+import com.sun.opengl.util.texture.Texture;
+import com.sun.opengl.util.texture.TextureCoords;
+import com.sun.opengl.util.texture.TextureIO;
+//import java.awt.*;
+//import java.awt.event.*;
+//import java.io.IOException;
+//import java.util.Random;
+//import javax.swing.*;
+//import javax.media.opengl.GL2;
+//import javax.media.opengl.GLAutoDrawable;
+//import javax.media.opengl.GLEventListener;
+//import javax.media.opengl.GLException;
+//import javax.media.opengl.awt.GLCanvas;
+//import javax.media.opengl.glu.GLU;
+//import com.jogamp.opengl.util.FPSAnimator;
+//import com.jogamp.opengl.util.texture.Texture;
+//import com.jogamp.opengl.util.texture.TextureCoords;
+//import com.jogamp.opengl.util.texture.TextureIO;
+//import static java.awt.event.KeyEvent.VK_T;
+//import static javax.media.opengl.GL.*; // GL constants
+//import static javax.media.opengl.GL2.*; // GL2 constants
+//import static javax.media.opengl.GL2ES1.GL_POINT_SMOOTH_HINT;
 
 /**
  * NeHe Lesson #19a: Fireworks
@@ -99,7 +137,7 @@ public class JOGL2Nehe19Fireworks implements GLEventListener, KeyListener {
 	 * used to perform one-time initialization. Run only once.
 	 */
 	public void init(GLAutoDrawable drawable) {
-		GL2 gl = drawable.getGL().getGL2(); // get the OpenGL graphics context
+		GL gl = drawable.getGL();
 		glu = new GLU(); // get GL Utilities
 		gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // set background (clear) color
 		gl.glClearDepth(1.0f); // set clear depth value to farthest
@@ -158,7 +196,7 @@ public class JOGL2Nehe19Fireworks implements GLEventListener, KeyListener {
 	 */
 	public void reshape(GLAutoDrawable drawable, int x, int y, int width,
 			int height) {
-		GL2 gl = drawable.getGL().getGL2(); // get the OpenGL 2 graphics context
+		GL gl = drawable.getGL();
 
 		if (height == 0)
 			height = 1; // prevent divide by zero
@@ -182,7 +220,7 @@ public class JOGL2Nehe19Fireworks implements GLEventListener, KeyListener {
 	 * Called back by the animator to perform rendering.
 	 */
 	public void display(GLAutoDrawable drawable) {
-		GL2 gl = drawable.getGL().getGL2(); // get the OpenGL 2 graphics context
+		GL gl = drawable.getGL();
 		gl.glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear color
 																// and depth
 																// buffers
@@ -196,8 +234,8 @@ public class JOGL2Nehe19Fireworks implements GLEventListener, KeyListener {
 				gl.glColor4f(particles[i].r, particles[i].g, particles[i].b,
 						particles[i].life);
 
-				texture.enable(gl);
-				texture.bind(gl);
+				texture.enable();
+				texture.bind();
 
 				gl.glBegin(GL_TRIANGLE_STRIP); // build quad from a triangle
 												// strip
@@ -308,5 +346,10 @@ public class JOGL2Nehe19Fireworks implements GLEventListener, KeyListener {
 	}
 
 	public void keyTyped(KeyEvent e) {
+	}
+
+	public void displayChanged(GLAutoDrawable arg0, boolean arg1, boolean arg2) {
+		// TODO Auto-generated method stub
+
 	}
 }

@@ -1,28 +1,126 @@
-import java.awt.*;
-import java.awt.event.*;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.util.Random;
-import javax.swing.*;
-import javax.imageio.ImageIO;
-import javax.media.opengl.GL2;
-import javax.media.opengl.GLAutoDrawable;
-import javax.media.opengl.GLEventListener;
-import javax.media.opengl.GLException;
-import javax.media.opengl.GLProfile;
-import javax.media.opengl.awt.GLCanvas;
-import javax.media.opengl.glu.GLU;
-import com.jogamp.opengl.util.FPSAnimator;
-import com.jogamp.opengl.util.texture.Texture;
-import com.jogamp.opengl.util.texture.TextureCoords;
-import com.jogamp.opengl.util.texture.awt.AWTTextureIO;
+import static java.awt.event.KeyEvent.VK_A;
+import static java.awt.event.KeyEvent.VK_D;
 import static java.awt.event.KeyEvent.VK_DOWN;
+import static java.awt.event.KeyEvent.VK_E;
+import static java.awt.event.KeyEvent.VK_LEFT;
 import static java.awt.event.KeyEvent.VK_PAGE_DOWN;
 import static java.awt.event.KeyEvent.VK_PAGE_UP;
+import static java.awt.event.KeyEvent.VK_Q;
+import static java.awt.event.KeyEvent.VK_RIGHT;
+import static java.awt.event.KeyEvent.VK_S;
+import static java.awt.event.KeyEvent.VK_SPACE;
 import static java.awt.event.KeyEvent.VK_T;
 import static java.awt.event.KeyEvent.VK_UP;
-import static javax.media.opengl.GL.*; // GL constants
-import static javax.media.opengl.GL2.*; // GL2 constants
+import static java.awt.event.KeyEvent.VK_W;
+import static java.awt.event.KeyEvent.VK_X;
+import static java.awt.event.KeyEvent.VK_L;
+import static java.awt.event.KeyEvent.VK_F;
+import static java.awt.event.KeyEvent.VK_G;
+import static java.awt.event.KeyEvent.VK_B;
+import static javax.media.opengl.GL.GL_BLEND;
+import static javax.media.opengl.GL.GL_COLOR_BUFFER_BIT;
+import static javax.media.opengl.GL.GL_DEPTH_BUFFER_BIT;
+import static javax.media.opengl.GL.GL_LINEAR;
+import static javax.media.opengl.GL.GL_MODELVIEW;
+import static javax.media.opengl.GL.GL_NICEST;
+import static javax.media.opengl.GL.GL_ONE;
+import static javax.media.opengl.GL.GL_PERSPECTIVE_CORRECTION_HINT;
+import static javax.media.opengl.GL.GL_POINT_SMOOTH_HINT;
+import static javax.media.opengl.GL.GL_PROJECTION;
+import static javax.media.opengl.GL.GL_SMOOTH;
+import static javax.media.opengl.GL.GL_SRC_ALPHA;
+import static javax.media.opengl.GL.GL_TEXTURE_2D;
+import static javax.media.opengl.GL.GL_TEXTURE_MAG_FILTER;
+import static javax.media.opengl.GL.GL_TEXTURE_MIN_FILTER;
+import static javax.media.opengl.GL.GL_TRIANGLE_STRIP;
+import static javax.media.opengl.GL.GL_DEPTH_TEST;
+import static javax.media.opengl.GL.GL_LEQUAL;
+import static javax.media.opengl.GL.GL_LINEAR_MIPMAP_NEAREST;
+import static javax.media.opengl.GL.GL_NEAREST;
+import static javax.media.opengl.GL.GL_LIGHTING;
+import static javax.media.opengl.GL.GL_LIGHT1;
+import static javax.media.opengl.GL.GL_POSITION;
+import static javax.media.opengl.GL.GL_AMBIENT;
+import static javax.media.opengl.GL.GL_DIFFUSE;
+import static javax.media.opengl.GL.GL_QUADS;
+import static javax.media.opengl.GL.GL_EXP;
+import static javax.media.opengl.GL.GL_EXP2;
+import static javax.media.opengl.GL.GL_FOG_COLOR;
+import static javax.media.opengl.GL.GL_FOG_DENSITY;
+import static javax.media.opengl.GL.GL_FOG_HINT;
+import static javax.media.opengl.GL.GL_DONT_CARE;
+import static javax.media.opengl.GL.GL_FOG_START;
+import static javax.media.opengl.GL.GL_FOG_END;
+import static javax.media.opengl.GL.GL_FOG;
+import static javax.media.opengl.GL.GL_FOG_MODE;
+import static javax.media.opengl.GL.GL_LIGHT0;
+import static javax.media.opengl.GL.GL_COLOR_MATERIAL;
+import static javax.media.opengl.GL.GL_COMPILE;
+import static javax.media.opengl.GL.GL_BACK;
+import static javax.media.opengl.GL.GL_FILL;
+import static javax.media.opengl.GL.GL_LINE;
+import static javax.media.opengl.GL.GL_FRONT;
+import static javax.media.opengl.GL.GL_TEXTURE_WRAP_S;
+import static javax.media.opengl.GL.GL_TEXTURE_WRAP_T;
+import static javax.media.opengl.GL.GL_REPEAT;
+import static javax.media.opengl.GL.GL_TRIANGLES;
+
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.text.DecimalFormat;
+import java.util.Random;
+import java.util.Scanner;
+
+import javax.imageio.ImageIO;
+import javax.media.opengl.GL;
+import javax.media.opengl.GLAutoDrawable;
+import javax.media.opengl.GLCanvas;
+import javax.media.opengl.GLEventListener;
+import javax.media.opengl.GLException;
+import javax.media.opengl.glu.GLU;
+import javax.media.opengl.glu.GLUquadric;
+import javax.swing.JFrame;
+
+import com.sun.opengl.util.FPSAnimator;
+import com.sun.opengl.util.j2d.TextRenderer;
+import com.sun.opengl.util.texture.Texture;
+import com.sun.opengl.util.texture.TextureCoords;
+import com.sun.opengl.util.texture.TextureIO;
+
+//import java.awt.*;
+//import java.awt.event.*;
+//import java.awt.image.BufferedImage;
+//import java.io.IOException;
+//import java.util.Random;
+//import javax.swing.*;
+//import javax.imageio.ImageIO;
+//import javax.media.opengl.GL2;
+//import javax.media.opengl.GLAutoDrawable;
+//import javax.media.opengl.GLEventListener;
+//import javax.media.opengl.GLException;
+//import javax.media.opengl.GLProfile;
+//import javax.media.opengl.awt.GLCanvas;
+//import javax.media.opengl.glu.GLU;
+//import com.jogamp.opengl.util.FPSAnimator;
+//import com.jogamp.opengl.util.texture.Texture;
+//import com.jogamp.opengl.util.texture.TextureCoords;
+//import com.jogamp.opengl.util.texture.awt.AWTTextureIO;
+//import static java.awt.event.KeyEvent.VK_DOWN;
+//import static java.awt.event.KeyEvent.VK_PAGE_DOWN;
+//import static java.awt.event.KeyEvent.VK_PAGE_UP;
+//import static java.awt.event.KeyEvent.VK_T;
+//import static java.awt.event.KeyEvent.VK_UP;
+//import static javax.media.opengl.GL.*; // GL constants
+//import static javax.media.opengl.GL2.*; // GL2 constants
 
 /**
  * NeHe Lesson #9: Moving Bitmaps In 3D Space
@@ -54,6 +152,7 @@ public class JOGL2Nehe09Stars implements GLEventListener, KeyListener {
 	// Texture applied over the shape
 	private Texture texture; // texture object
 	private String textureFileName = "images/star.bmp";
+	private String textureFileType = ".bmp";
 
 	// Texture image flips vertically. Shall use TextureCoords class to retrieve
 	// the
@@ -107,7 +206,7 @@ public class JOGL2Nehe09Stars implements GLEventListener, KeyListener {
 	 * used to perform one-time initialization. Run only once.
 	 */
 	public void init(GLAutoDrawable drawable) {
-		GL2 gl = drawable.getGL().getGL2(); // get the OpenGL graphics context
+		GL gl = drawable.getGL();
 		glu = new GLU(); // get GL Utilities
 		gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // set background (clear) color
 		gl.glClearDepth(1.0f); // set clear depth value to farthest
@@ -127,8 +226,10 @@ public class JOGL2Nehe09Stars implements GLEventListener, KeyListener {
 					textureFileName));
 
 			// Create a OpenGL Texture object
-			texture = AWTTextureIO.newTexture(GLProfile.getDefault(), image,
-					false);
+			texture = // AWTTextureIO.newTexture(GLProfile.getDefault(), image,
+						// false);
+			TextureIO.newTexture(this.getClass().getResource(textureFileName),
+					false, textureFileType);
 			// Use linear filter if image is larger than the original texture
 			gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 			// Use linear filter if image is smaller than the original texture
@@ -151,8 +252,8 @@ public class JOGL2Nehe09Stars implements GLEventListener, KeyListener {
 		textureCoordRight = textureCoords.right();
 
 		// Enable the texture
-		texture.enable(gl);
-		texture.bind(gl);
+		texture.enable();
+		texture.bind();
 		// gl.glEnable(GL_TEXTURE_2D);
 
 		// Enable blending
@@ -173,7 +274,7 @@ public class JOGL2Nehe09Stars implements GLEventListener, KeyListener {
 	 */
 	public void reshape(GLAutoDrawable drawable, int x, int y, int width,
 			int height) {
-		GL2 gl = drawable.getGL().getGL2(); // get the OpenGL 2 graphics context
+		GL gl = drawable.getGL();
 
 		if (height == 0)
 			height = 1; // prevent divide by zero
@@ -197,7 +298,7 @@ public class JOGL2Nehe09Stars implements GLEventListener, KeyListener {
 	 * Called back by the animator to perform rendering.
 	 */
 	public void display(GLAutoDrawable drawable) {
-		GL2 gl = drawable.getGL().getGL2(); // get the OpenGL 2 graphics context
+		GL gl = drawable.getGL();
 		gl.glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear color
 																// and depth
 																// buffers
@@ -353,5 +454,10 @@ public class JOGL2Nehe09Stars implements GLEventListener, KeyListener {
 			g = (byte) rand.nextInt(256);
 			b = (byte) rand.nextInt(256);
 		}
+	}
+
+	public void displayChanged(GLAutoDrawable arg0, boolean arg1, boolean arg2) {
+		// TODO Auto-generated method stub
+
 	}
 }

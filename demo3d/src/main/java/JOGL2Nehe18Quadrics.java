@@ -1,21 +1,3 @@
-import java.awt.*;
-import java.awt.event.*;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import javax.swing.*;
-import javax.imageio.ImageIO;
-import javax.media.opengl.GL2;
-import javax.media.opengl.GLAutoDrawable;
-import javax.media.opengl.GLEventListener;
-import javax.media.opengl.GLException;
-import javax.media.opengl.GLProfile;
-import javax.media.opengl.awt.GLCanvas;
-import javax.media.opengl.glu.GLU;
-import javax.media.opengl.glu.GLUquadric;
-import com.jogamp.opengl.util.FPSAnimator;
-import com.jogamp.opengl.util.texture.Texture;
-import com.jogamp.opengl.util.texture.TextureCoords;
-import com.jogamp.opengl.util.texture.awt.AWTTextureIO;
 import static java.awt.event.KeyEvent.VK_DOWN;
 import static java.awt.event.KeyEvent.VK_F;
 import static java.awt.event.KeyEvent.VK_L;
@@ -25,13 +7,85 @@ import static java.awt.event.KeyEvent.VK_PAGE_UP;
 import static java.awt.event.KeyEvent.VK_RIGHT;
 import static java.awt.event.KeyEvent.VK_SPACE;
 import static java.awt.event.KeyEvent.VK_UP;
-import static javax.media.opengl.GL.*; // GL constants
-import static javax.media.opengl.GL2.*; // GL2 constants
-import static javax.media.opengl.fixedfunc.GLLightingFunc.GL_AMBIENT;
-import static javax.media.opengl.fixedfunc.GLLightingFunc.GL_DIFFUSE;
-import static javax.media.opengl.fixedfunc.GLLightingFunc.GL_LIGHT1;
-import static javax.media.opengl.fixedfunc.GLLightingFunc.GL_LIGHTING;
-import static javax.media.opengl.fixedfunc.GLLightingFunc.GL_POSITION;
+import static javax.media.opengl.GL.GL_AMBIENT;
+import static javax.media.opengl.GL.GL_COLOR_BUFFER_BIT;
+import static javax.media.opengl.GL.GL_DEPTH_BUFFER_BIT;
+import static javax.media.opengl.GL.GL_DEPTH_TEST;
+import static javax.media.opengl.GL.GL_DIFFUSE;
+import static javax.media.opengl.GL.GL_LEQUAL;
+import static javax.media.opengl.GL.GL_LIGHT1;
+import static javax.media.opengl.GL.GL_LIGHTING;
+import static javax.media.opengl.GL.GL_LINEAR;
+import static javax.media.opengl.GL.GL_LINEAR_MIPMAP_NEAREST;
+import static javax.media.opengl.GL.GL_MODELVIEW;
+import static javax.media.opengl.GL.GL_NEAREST;
+import static javax.media.opengl.GL.GL_NICEST;
+import static javax.media.opengl.GL.GL_PERSPECTIVE_CORRECTION_HINT;
+import static javax.media.opengl.GL.GL_POSITION;
+import static javax.media.opengl.GL.GL_PROJECTION;
+import static javax.media.opengl.GL.GL_QUADS;
+import static javax.media.opengl.GL.GL_SMOOTH;
+import static javax.media.opengl.GL.GL_TEXTURE_2D;
+import static javax.media.opengl.GL.GL_TEXTURE_MAG_FILTER;
+import static javax.media.opengl.GL.GL_TEXTURE_MIN_FILTER;
+
+import java.awt.Dimension;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+import javax.media.opengl.GL;
+import javax.media.opengl.GLAutoDrawable;
+import javax.media.opengl.GLCanvas;
+import javax.media.opengl.GLEventListener;
+import javax.media.opengl.GLException;
+import javax.media.opengl.glu.GLU;
+import javax.media.opengl.glu.GLUquadric;
+import javax.swing.JFrame;
+
+import com.sun.opengl.util.FPSAnimator;
+import com.sun.opengl.util.texture.Texture;
+import com.sun.opengl.util.texture.TextureCoords;
+import com.sun.opengl.util.texture.TextureIO;
+
+//import java.awt.*;
+//import java.awt.event.*;
+//import java.awt.image.BufferedImage;
+//import java.io.IOException;
+//import javax.swing.*;
+//import javax.imageio.ImageIO;
+//import javax.media.opengl.GL2;
+//import javax.media.opengl.GLAutoDrawable;
+//import javax.media.opengl.GLEventListener;
+//import javax.media.opengl.GLException;
+//import javax.media.opengl.GLProfile;
+//import javax.media.opengl.awt.GLCanvas;
+//import javax.media.opengl.glu.GLU;
+//import javax.media.opengl.glu.GLUquadric;
+//import com.jogamp.opengl.util.FPSAnimator;
+//import com.jogamp.opengl.util.texture.Texture;
+//import com.jogamp.opengl.util.texture.TextureCoords;
+//import com.jogamp.opengl.util.texture.awt.AWTTextureIO;
+//import static java.awt.event.KeyEvent.VK_DOWN;
+//import static java.awt.event.KeyEvent.VK_F;
+//import static java.awt.event.KeyEvent.VK_L;
+//import static java.awt.event.KeyEvent.VK_LEFT;
+//import static java.awt.event.KeyEvent.VK_PAGE_DOWN;
+//import static java.awt.event.KeyEvent.VK_PAGE_UP;
+//import static java.awt.event.KeyEvent.VK_RIGHT;
+//import static java.awt.event.KeyEvent.VK_SPACE;
+//import static java.awt.event.KeyEvent.VK_UP;
+//import static javax.media.opengl.GL.*; // GL constants
+//import static javax.media.opengl.GL2.*; // GL2 constants
+//import static javax.media.opengl.fixedfunc.GLLightingFunc.GL_AMBIENT;
+//import static javax.media.opengl.fixedfunc.GLLightingFunc.GL_DIFFUSE;
+//import static javax.media.opengl.fixedfunc.GLLightingFunc.GL_LIGHT1;
+//import static javax.media.opengl.fixedfunc.GLLightingFunc.GL_LIGHTING;
+//import static javax.media.opengl.fixedfunc.GLLightingFunc.GL_POSITION;
 
 /**
  * NeHe Lesson #18: Quadrics
@@ -76,6 +130,7 @@ public class JOGL2Nehe18Quadrics implements GLEventListener, KeyListener {
 	private Texture[] textures = new Texture[3];
 	private static int currTextureFilter = 0; // currently used filter
 	private String textureFileName = "images/wall.bmp";
+	private String textureFileType = ".bmp";
 
 	// Texture image flips vertically. Shall use TextureCoords class to retrieve
 	// the
@@ -133,7 +188,7 @@ public class JOGL2Nehe18Quadrics implements GLEventListener, KeyListener {
 	 * used to perform one-time initialization. Run only once.
 	 */
 	public void init(GLAutoDrawable drawable) {
-		GL2 gl = drawable.getGL().getGL2(); // get the OpenGL graphics context
+		GL gl = drawable.getGL();
 		glu = new GLU(); // get GL Utilities
 		gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // set background (clear) color
 		gl.glClearDepth(1.0f); // set clear depth value to farthest
@@ -148,12 +203,14 @@ public class JOGL2Nehe18Quadrics implements GLEventListener, KeyListener {
 		// Load the texture image
 		try {
 			// Use URL so that can read from JAR and disk file.
-			BufferedImage image = ImageIO.read(this.getClass().getResource(
-					textureFileName));
+			// BufferedImage image = ImageIO.read(this.getClass().getResource(
+			// textureFileName));
 
 			// Create a OpenGL Texture object
-			textures[0] = AWTTextureIO.newTexture(GLProfile.getDefault(),
-					image, false);
+			textures[0] = // AWTTextureIO.newTexture(GLProfile.getDefault(),
+			// image, false);
+			TextureIO.newTexture(this.getClass().getResource(textureFileName),
+					false, textureFileType);
 			// Nearest filter is least compute-intensive
 			// Use nearer filter if image is larger than the original texture
 			gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -164,16 +221,20 @@ public class JOGL2Nehe18Quadrics implements GLEventListener, KeyListener {
 			// .getHeight(), 0, GL.GL_RGB, GL.GL_UNSIGNED_BYTE,
 			// textures[0].getPixels());
 
-			textures[1] = AWTTextureIO.newTexture(GLProfile.getDefault(),
-					image, false);
+			textures[1] = // AWTTextureIO.newTexture(GLProfile.getDefault(),
+			// image, false);
+			TextureIO.newTexture(this.getClass().getResource(textureFileName),
+					false, textureFileType);
 			// Linear filter is more compute-intensive
 			// Use linear filter if image is larger than the original texture
 			gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 			// Use linear filter if image is smaller than the original texture
 			gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
-			textures[2] = AWTTextureIO.newTexture(GLProfile.getDefault(),
-					image, true); // mipmap is true
+			textures[2] = // AWTTextureIO.newTexture(GLProfile.getDefault(),
+			// image, true); // mipmap is true
+			TextureIO.newTexture(this.getClass().getResource(textureFileName),
+					false, textureFileType);
 			// Use mipmap filter is the image is smaller than the texture
 			gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 			gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
@@ -224,7 +285,7 @@ public class JOGL2Nehe18Quadrics implements GLEventListener, KeyListener {
 	 */
 	public void reshape(GLAutoDrawable drawable, int x, int y, int width,
 			int height) {
-		GL2 gl = drawable.getGL().getGL2(); // get the OpenGL 2 graphics context
+		GL gl = drawable.getGL();
 
 		if (height == 0)
 			height = 1; // prevent divide by zero
@@ -248,7 +309,7 @@ public class JOGL2Nehe18Quadrics implements GLEventListener, KeyListener {
 	 * Called back by the animator to perform rendering.
 	 */
 	public void display(GLAutoDrawable drawable) {
-		GL2 gl = drawable.getGL().getGL2(); // get the OpenGL 2 graphics context
+		GL gl = drawable.getGL();
 		gl.glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear color
 																// and depth
 																// buffers
@@ -264,10 +325,10 @@ public class JOGL2Nehe18Quadrics implements GLEventListener, KeyListener {
 
 		// Enables this texture's target (e.g., GL_TEXTURE_2D) in the current GL
 		// context's state.
-		textures[currTextureFilter].enable(gl);
+		textures[currTextureFilter].enable();
 		// Bind the texture with the currently chosen filter to the current
 		// OpenGL graphics context.
-		textures[currTextureFilter].bind(gl);
+		textures[currTextureFilter].bind();
 
 		gl.glTranslatef(0.0f, 0.0f, z); // translate into the screen
 		gl.glRotatef(rotateAngleX, 1.0f, 0.0f, 0.0f); // rotate about the x-axis
@@ -367,7 +428,7 @@ public class JOGL2Nehe18Quadrics implements GLEventListener, KeyListener {
 
 		// Disables this texture's target (e.g., GL_TEXTURE_2D) in the current
 		// GL context's state.
-		textures[currTextureFilter].disable(gl);
+		textures[currTextureFilter].disable();
 
 		// Update the rotational position after each refresh, based on
 		// rotational speed.
@@ -375,7 +436,7 @@ public class JOGL2Nehe18Quadrics implements GLEventListener, KeyListener {
 		rotateAngleY += rotateSpeedY;
 	}
 
-	private void drawCube(GL2 gl) {
+	private void drawCube(GL gl) {
 		// ------ Render a Cube with texture ------
 
 		gl.glBegin(GL_QUADS); // of the color cube
@@ -492,5 +553,10 @@ public class JOGL2Nehe18Quadrics implements GLEventListener, KeyListener {
 	}
 
 	public void keyTyped(KeyEvent e) {
+	}
+
+	public void displayChanged(GLAutoDrawable arg0, boolean arg1, boolean arg2) {
+		// TODO Auto-generated method stub
+
 	}
 }
