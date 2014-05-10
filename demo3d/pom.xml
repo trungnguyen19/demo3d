@@ -1,0 +1,98 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.trungnd10.3d</groupId>
+	<artifactId>demo3d</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<properties>
+		<org.jogamp.version>2.1.5-01</org.jogamp.version>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>java3d</groupId>
+			<artifactId>j3d-core</artifactId>
+			<version>1.3.1</version>
+		</dependency>
+		<dependency>
+			<groupId>java3d</groupId>
+			<artifactId>j3d-core-utils</artifactId>
+			<version>1.3.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jogamp.jogl</groupId>
+			<artifactId>jogl-all</artifactId>
+			<version>${org.jogamp.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jogamp.jocl</groupId>
+			<artifactId>jocl</artifactId>
+			<version>${org.jogamp.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jogamp.gluegen</groupId>
+			<artifactId>gluegen-rt-main</artifactId>
+			<version>${org.jogamp.version}</version>
+		</dependency>
+
+		<!-- <dependency> <groupId>org.jogamp.gluegen-rt</groupId> <artifactId>jogl</artifactId> 
+			<version>${org.jogamp.version}</version> </dependency> <dependency> <groupId>org.jogamp.gluegen-rt</groupId> 
+			<artifactId>jogl</artifactId> <version>${org.jogamp.version}</version> <classifier>natives-linux-i586</classifier> 
+			</dependency> -->
+		<dependency>
+			<groupId>org.jogamp.jogl</groupId>
+			<artifactId>jogl</artifactId>
+			<version>${org.jogamp.version}</version>
+			<classifier>core</classifier>
+		</dependency>
+		<!-- <dependency> <groupId>org.jogamp.jogl</groupId> <artifactId>jogl</artifactId> 
+			<version>${org.jogamp.version}</version> <classifier>natives-linux-i586</classifier> 
+			</dependency> -->
+		<dependency>
+			<groupId>org.jogamp.jogl</groupId>
+			<artifactId>jogl</artifactId>
+			<version>${org.jogamp.version}</version>
+			<classifier>os-x11</classifier>
+		</dependency>
+		<dependency>
+			<groupId>org.jogamp.jogl</groupId>
+			<artifactId>jogl</artifactId>
+			<version>${org.jogamp.version}</version>
+			<classifier>os-x11</classifier>
+		</dependency>
+		<dependency>
+			<groupId>org.jogamp.jogl</groupId>
+			<artifactId>newt</artifactId>
+			<version>${org.jogamp.version}</version>
+			<classifier>driver-x11</classifier>
+		</dependency>
+		<dependency>
+			<groupId>org.jogamp.jogl</groupId>
+			<artifactId>newt</artifactId>
+			<version>${org.jogamp.version}</version>
+			<classifier>core</classifier>
+		</dependency>
+		<dependency>
+			<groupId>org.jogamp.jogl</groupId>
+			<artifactId>newt</artifactId>
+			<version>${org.jogamp.version}</version>
+			<!-- <classifier>natives-linux-i586</classifier> -->
+		</dependency>
+		<dependency>
+			<groupId>org.jogamp.jogl</groupId>
+			<artifactId>nativewindow</artifactId>
+			<version>${org.jogamp.version}</version>
+			<classifier>core</classifier>
+		</dependency>
+		<dependency>
+			<groupId>org.jogamp.jogl</groupId>
+			<artifactId>nativewindow</artifactId>
+			<version>${org.jogamp.version}</version>
+			<!-- <classifier>natives-linux-i586</classifier> -->
+		</dependency>
+		<!-- <dependency> <groupId>org.jogamp.jogl</groupId> <artifactId>nativewindow</artifactId> 
+			<version>${org.jogamp.version}</version> <classifier>driver-x11</classifier> 
+			</dependency> -->
+	</dependencies>
+
+</project>
