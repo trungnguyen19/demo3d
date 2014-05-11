@@ -324,30 +324,36 @@ public class Lesson17 extends Frame implements GLEventListener, KeyListener {
 												// Character
 			gl.glNewList(base + loop, GL.GL_COMPILE);
 			gl.glBegin(GL.GL_QUADS);
-//			gl.glTexCoord2f(cx, 1 - cy - 0.0625f);           // Texture Coord (Bottom Left)
-//			gl.glVertex2i(0, 0);                              // Vertex Coord (Bottom Left)
-//			gl.glTexCoord2f(cx + 0.0625f, 1 - cy - 0.0625f); // Texture Coord (Bottom Right)
-//			gl.glVertex2i(16, 0);                             // Vertex Coord (Bottom Right)
-//			gl.glTexCoord2f(cx + 0.0625f, 1 - cy);           // Texture Coord (Top Right)
-//			gl.glVertex2i(16, 16);                            // Vertex Coord (Top Right)
-//			gl.glTexCoord2f(cx, 1 - cy);                     // Texture Coord (Top Left)
-//			gl.glVertex2i(0, 16);                             // Vertex Coord (Top Left)
-//			1    2
-//			4    3
-//			4    3
-//			1    2
-//			1 - 0:0
-//			2 - 16:0
-//			3 - 16:16
-//			4 - 0:16
-			gl.glTexCoord2f(cx, 1 - cy - 0.0625f);           // Texture Coord (Bottom Left)
-			gl.glVertex2i(0, 16);                              // Vertex Coord (Bottom Left)
-			gl.glTexCoord2f(cx + 0.0625f, 1 - cy - 0.0625f); // Texture Coord (Bottom Right)
-			gl.glVertex2i(16, 16);                             // Vertex Coord (Bottom Right)
-			gl.glTexCoord2f(cx + 0.0625f, 1 - cy);           // Texture Coord (Top Right)
-			gl.glVertex2i(16, 0);                            // Vertex Coord (Top Right)
-			gl.glTexCoord2f(cx, 1 - cy);                     // Texture Coord (Top Left)
-			gl.glVertex2i(0, 0);                             // Vertex Coord (Top Left)
+			// gl.glTexCoord2f(cx, 1 - cy - 0.0625f); // Texture Coord (Bottom
+			// Left)
+			// gl.glVertex2i(0, 0); // Vertex Coord (Bottom Left)
+			// gl.glTexCoord2f(cx + 0.0625f, 1 - cy - 0.0625f); // Texture Coord
+			// (Bottom Right)
+			// gl.glVertex2i(16, 0); // Vertex Coord (Bottom Right)
+			// gl.glTexCoord2f(cx + 0.0625f, 1 - cy); // Texture Coord (Top
+			// Right)
+			// gl.glVertex2i(16, 16); // Vertex Coord (Top Right)
+			// gl.glTexCoord2f(cx, 1 - cy); // Texture Coord (Top Left)
+			// gl.glVertex2i(0, 16); // Vertex Coord (Top Left)
+			// 1 2
+			// 4 3
+			// 4 3
+			// 1 2
+			// 1 - 0:0
+			// 2 - 16:0
+			// 3 - 16:16
+			// 4 - 0:16
+			gl.glTexCoord2f(cx, 1 - cy - 0.0625f); // Texture Coord (Bottom
+													// Left)
+			gl.glVertex2i(0, 16); // Vertex Coord (Bottom Left)
+			gl.glTexCoord2f(cx + 0.0625f, 1 - cy - 0.0625f); // Texture Coord
+																// (Bottom
+																// Right)
+			gl.glVertex2i(16, 16); // Vertex Coord (Bottom Right)
+			gl.glTexCoord2f(cx + 0.0625f, 1 - cy); // Texture Coord (Top Right)
+			gl.glVertex2i(16, 0); // Vertex Coord (Top Right)
+			gl.glTexCoord2f(cx, 1 - cy); // Texture Coord (Top Left)
+			gl.glVertex2i(0, 0); // Vertex Coord (Top Left)
 			gl.glEnd(); // Done Building Our Quad (Character)
 			gl.glTranslated(10, 0, 0); // Move To The Right Of The Character
 			gl.glEndList();
@@ -402,14 +408,17 @@ public class Lesson17 extends Frame implements GLEventListener, KeyListener {
 		gl.glTranslated(x, y, 0);
 		gl.glListBase(base - 32 + (128 * set));
 
-		int size = text.getBytes().length;
-		ByteBuffer unpackedPixels = ByteBuffer.allocate(size);
-		byte[] p = text.getBytes();
-		for (int i = 0; i < size; i++) {
-//			System.out.print((char)p[i]);
-			unpackedPixels.put(i,p[i]);
-		}
-		System.out.println(unpackedPixels);
+		// int size = text.getBytes().length;
+		// ByteBuffer unpackedPixels = ByteBuffer.allocate(size);
+		// byte[] p = text.getBytes();
+		// for (int i = 0; i < size; i++) {
+		// // System.out.print((char)p[i]);
+		// unpackedPixels.put(i, p[i]);
+		// }
+		// System.out.println(unpackedPixels);
+		ByteBuffer unpackedPixels = ByteBuffer.allocate(text.getBytes().length);
+		unpackedPixels.put(text.getBytes());
+		unpackedPixels.rewind();
 
 		gl.glCallLists(text.length(), GL.GL_BYTE, unpackedPixels);// text.getBytes());
 		gl.glMatrixMode(GL.GL_PROJECTION); // Select The Projection Matrix
@@ -418,13 +427,13 @@ public class Lesson17 extends Frame implements GLEventListener, KeyListener {
 		gl.glPopMatrix();
 		gl.glEnable(GL.GL_DEPTH_TEST);
 		myTextures[0].disable();
-		
-//		try {
-//			Thread.sleep(100);
-//		} catch (InterruptedException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+
+		// try {
+		// Thread.sleep(100);
+		// } catch (InterruptedException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
 	}
 
 	/**
