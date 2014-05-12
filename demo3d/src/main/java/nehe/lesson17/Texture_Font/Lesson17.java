@@ -28,12 +28,15 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
+import javax.imageio.ImageIO;
 import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCanvas;
@@ -51,6 +54,7 @@ import nehe.lesson17.LoadImageTypes.LoadPNGImages;
 import nehe.lesson17.OptionFrame.Options;
 
 import com.sun.opengl.util.Animator;
+import com.sun.opengl.util.ImageUtil;
 import com.sun.opengl.util.texture.Texture;
 import com.sun.opengl.util.texture.TextureIO;
 
@@ -248,7 +252,10 @@ public class Lesson17 extends Frame implements GLEventListener, KeyListener {
 			throw new RuntimeException("Error reading resource " + resourceName);
 		}
 		try {
-			myTextures[0] = TextureIO.newTexture(url, false, ".bmp");
+			BufferedImage tBufferedImage = ImageIO
+					.read(new File(url.getFile()));
+			ImageUtil.flipImageVertically(tBufferedImage);
+			myTextures[0] = TextureIO.newTexture(tBufferedImage, true);
 			myTextures[1] = TextureIO.newTexture(url2, false, ".bmp");
 		} catch (GLException e) {
 			// TODO Auto-generated catch block
@@ -324,36 +331,17 @@ public class Lesson17 extends Frame implements GLEventListener, KeyListener {
 												// Character
 			gl.glNewList(base + loop, GL.GL_COMPILE);
 			gl.glBegin(GL.GL_QUADS);
-			// gl.glTexCoord2f(cx, 1 - cy - 0.0625f); // Texture Coord (Bottom
-			// Left)
-			// gl.glVertex2i(0, 0); // Vertex Coord (Bottom Left)
-			// gl.glTexCoord2f(cx + 0.0625f, 1 - cy - 0.0625f); // Texture Coord
-			// (Bottom Right)
-			// gl.glVertex2i(16, 0); // Vertex Coord (Bottom Right)
-			// gl.glTexCoord2f(cx + 0.0625f, 1 - cy); // Texture Coord (Top
-			// Right)
-			// gl.glVertex2i(16, 16); // Vertex Coord (Top Right)
-			// gl.glTexCoord2f(cx, 1 - cy); // Texture Coord (Top Left)
-			// gl.glVertex2i(0, 16); // Vertex Coord (Top Left)
-			// 1 2
-			// 4 3
-			// 4 3
-			// 1 2
-			// 1 - 0:0
-			// 2 - 16:0
-			// 3 - 16:16
-			// 4 - 0:16
 			gl.glTexCoord2f(cx, 1 - cy - 0.0625f); // Texture Coord (Bottom
 													// Left)
-			gl.glVertex2i(0, 16); // Vertex Coord (Bottom Left)
+			gl.glVertex2i(0, 0); // Vertex Coord (Bottom Left)
 			gl.glTexCoord2f(cx + 0.0625f, 1 - cy - 0.0625f); // Texture Coord
 																// (Bottom
 																// Right)
-			gl.glVertex2i(16, 16); // Vertex Coord (Bottom Right)
+			gl.glVertex2i(16, 0); // Vertex Coord (Bottom Right)
 			gl.glTexCoord2f(cx + 0.0625f, 1 - cy); // Texture Coord (Top Right)
-			gl.glVertex2i(16, 0); // Vertex Coord (Top Right)
+			gl.glVertex2i(16, 16); // Vertex Coord (Top Right)
 			gl.glTexCoord2f(cx, 1 - cy); // Texture Coord (Top Left)
-			gl.glVertex2i(0, 0); // Vertex Coord (Top Left)
+			gl.glVertex2i(0, 16); // Vertex Coord (Top Left)
 			gl.glEnd(); // Done Building Our Quad (Character)
 			gl.glTranslated(10, 0, 0); // Move To The Right Of The Character
 			gl.glEndList();
