@@ -1,4 +1,4 @@
-package nehe.lesson6;
+package nehe.lesson20;
 
 /*
  * Lesson06.java
@@ -15,6 +15,7 @@ import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.awt.image.DataBufferInt;
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.ByteBuffer;
@@ -29,6 +30,7 @@ import javax.media.opengl.GLException;
 import javax.media.opengl.glu.GLU;
 
 import com.sun.opengl.util.Animator;
+import com.sun.opengl.util.ImageUtil;
 import com.sun.opengl.util.texture.Texture;
 import com.sun.opengl.util.texture.TextureIO;
 
@@ -41,7 +43,7 @@ import com.sun.opengl.util.texture.TextureIO;
  * 
  * @author Kevin Duling (jattier@hotmail.com)
  */
-public class Lesson06 {
+public class Lesson20 {
 	static Animator animator = null;
 
 	static class Renderer implements GLEventListener, KeyListener {
@@ -52,7 +54,11 @@ public class Lesson06 {
 
 		private GLU glu; // for the GL Utility
 
-		private Texture myTexture;
+		private Texture[] myTextures = new Texture[5];
+
+		private boolean scene, masking;
+
+		private float roll;
 
 		/**
 		 * Called by the drawable to initiate OpenGL rendering by the client.
@@ -65,81 +71,139 @@ public class Lesson06 {
 		public void display(GLAutoDrawable gLDrawable) {
 			final GL gl = gLDrawable.getGL();
 
-			myTexture.enable();
-			myTexture.bind();
+			gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT); // Clear
+																			// The
+																			// Screen
+																			// And
+																			// The
+																			// Depth
+																			// Buffer
+			gl.glLoadIdentity(); // Reset The Modelview Matrix
+			gl.glTranslatef(0.0f, 0.0f, -2.0f); // Move Into The Screen 5 Units
 
-			gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
-			gl.glLoadIdentity(); // Reset The View
-			gl.glTranslatef(0.0f, 0.0f, -5.0f);
+			myTextures[0].enable();
+			myTextures[0].bind();
 
-			gl.glRotatef(xrot, 1.0f, 0.0f, 0.0f);
-			gl.glRotatef(yrot, 0.0f, 1.0f, 0.0f);
-			gl.glRotatef(zrot, 0.0f, 0.0f, 1.0f);
+			gl.glBegin(GL.GL_QUADS); // Start Drawing A Textured Quad
+			gl.glTexCoord2f(0.0f, -roll + 0.0f);
+			gl.glVertex3f(-1.1f, -1.1f, 0.0f); // Bottom Left
+			gl.glTexCoord2f(3.0f, -roll + 0.0f);
+			gl.glVertex3f(1.1f, -1.1f, 0.0f); // Bottom Right
+			gl.glTexCoord2f(3.0f, -roll + 3.0f);
+			gl.glVertex3f(1.1f, 1.1f, 0.0f); // Top Right
+			gl.glTexCoord2f(0.0f, -roll + 3.0f);
+			gl.glVertex3f(-1.1f, 1.1f, 0.0f); // Top Left
+			gl.glEnd(); // Done Drawing The Quad
 
-			// gl.glBindTexture(GL.GL_TEXTURE_2D, texture);
+			gl.glEnable(GL.GL_BLEND); // Enable Blending
+			gl.glDisable(GL.GL_DEPTH_TEST); // Disable Depth Testing
 
-			gl.glBegin(GL.GL_QUADS);
-			// Front Face
-			gl.glTexCoord2f(0.0f, 0.0f);
-			gl.glVertex3f(-1.0f, -1.0f, 1.0f);
-			gl.glTexCoord2f(1.0f, 0.0f);
-			gl.glVertex3f(1.0f, -1.0f, 1.0f);
-			gl.glTexCoord2f(1.0f, 1.0f);
-			gl.glVertex3f(1.0f, 1.0f, 1.0f);
-			gl.glTexCoord2f(0.0f, 1.0f);
-			gl.glVertex3f(-1.0f, 1.0f, 1.0f);
-			// Back Face
-			gl.glTexCoord2f(1.0f, 0.0f);
-			gl.glVertex3f(-1.0f, -1.0f, -1.0f);
-			gl.glTexCoord2f(1.0f, 1.0f);
-			gl.glVertex3f(-1.0f, 1.0f, -1.0f);
-			gl.glTexCoord2f(0.0f, 1.0f);
-			gl.glVertex3f(1.0f, 1.0f, -1.0f);
-			gl.glTexCoord2f(0.0f, 0.0f);
-			gl.glVertex3f(1.0f, -1.0f, -1.0f);
-			// Top Face
-			gl.glTexCoord2f(0.0f, 1.0f);
-			gl.glVertex3f(-1.0f, 1.0f, -1.0f);
-			gl.glTexCoord2f(0.0f, 0.0f);
-			gl.glVertex3f(-1.0f, 1.0f, 1.0f);
-			gl.glTexCoord2f(1.0f, 0.0f);
-			gl.glVertex3f(1.0f, 1.0f, 1.0f);
-			gl.glTexCoord2f(1.0f, 1.0f);
-			gl.glVertex3f(1.0f, 1.0f, -1.0f);
-			// Bottom Face
-			gl.glTexCoord2f(1.0f, 1.0f);
-			gl.glVertex3f(-1.0f, -1.0f, -1.0f);
-			gl.glTexCoord2f(0.0f, 1.0f);
-			gl.glVertex3f(1.0f, -1.0f, -1.0f);
-			gl.glTexCoord2f(0.0f, 0.0f);
-			gl.glVertex3f(1.0f, -1.0f, 1.0f);
-			gl.glTexCoord2f(1.0f, 0.0f);
-			gl.glVertex3f(-1.0f, -1.0f, 1.0f);
-			// Right face
-			gl.glTexCoord2f(1.0f, 0.0f);
-			gl.glVertex3f(1.0f, -1.0f, -1.0f);
-			gl.glTexCoord2f(1.0f, 1.0f);
-			gl.glVertex3f(1.0f, 1.0f, -1.0f);
-			gl.glTexCoord2f(0.0f, 1.0f);
-			gl.glVertex3f(1.0f, 1.0f, 1.0f);
-			gl.glTexCoord2f(0.0f, 0.0f);
-			gl.glVertex3f(1.0f, -1.0f, 1.0f);
-			// Left Face
-			gl.glTexCoord2f(0.0f, 0.0f);
-			gl.glVertex3f(-1.0f, -1.0f, -1.0f);
-			gl.glTexCoord2f(1.0f, 0.0f);
-			gl.glVertex3f(-1.0f, -1.0f, 1.0f);
-			gl.glTexCoord2f(1.0f, 1.0f);
-			gl.glVertex3f(-1.0f, 1.0f, 1.0f);
-			gl.glTexCoord2f(0.0f, 1.0f);
-			gl.glVertex3f(-1.0f, 1.0f, -1.0f);
-			gl.glEnd();
+			myTextures[0].disable();
 
-			xrot += 0.3f;
-			yrot += 0.2f;
-			zrot += 0.4f;
+			if (masking) // Is Masking Enabled?
+			{
+				//////////////////////////
+				//////////////////////////
+				//////////////////////////
+				////////////??////////////
+				//////////////////////////
+				//////////////////////////
+				//////////////////////////
+				gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE);
+				//gl.glBlendFunc(GL.GL_DST_COLOR, GL.GL_ZERO); // Blend Screen
+																// Color With
+																// Zero (Black)
+			}
 
-			myTexture.disable();
+			if (scene) // Are We Drawing The Second Scene?
+			{
+				gl.glTranslatef(0.0f, 0.0f, -1.0f); // Translate Into The Screen
+													// One Unit
+				gl.glRotatef(roll * 360, 0.0f, 0.0f, 1.0f); // Rotate On The Z
+															// Axis 360 Degrees.
+				if (masking) // Is Masking On?
+				{
+
+					myTextures[3].enable();
+					myTextures[3].bind();
+
+					gl.glBegin(GL.GL_QUADS); // Start Drawing A Textured Quad
+					gl.glTexCoord2f(0.0f, 0.0f);
+					gl.glVertex3f(-1.1f, -1.1f, 0.0f); // Bottom Left
+					gl.glTexCoord2f(1.0f, 0.0f);
+					gl.glVertex3f(1.1f, -1.1f, 0.0f); // Bottom Right
+					gl.glTexCoord2f(1.0f, 1.0f);
+					gl.glVertex3f(1.1f, 1.1f, 0.0f); // Top Right
+					gl.glTexCoord2f(0.0f, 1.0f);
+					gl.glVertex3f(-1.1f, 1.1f, 0.0f); // Top Left
+					gl.glEnd(); // Done Drawing The Quad
+					myTextures[3].disable();
+				}
+
+				gl.glBlendFunc(GL.GL_ONE, GL.GL_ONE); // Copy Image 2 Color To
+														// The Screen
+
+				myTextures[4].enable();
+				myTextures[4].bind();
+
+				gl.glBegin(GL.GL_QUADS); // Start Drawing A Textured Quad
+				gl.glTexCoord2f(0.0f, 0.0f);
+				gl.glVertex3f(-1.1f, -1.1f, 0.0f); // Bottom Left
+				gl.glTexCoord2f(1.0f, 0.0f);
+				gl.glVertex3f(1.1f, -1.1f, 0.0f); // Bottom Right
+				gl.glTexCoord2f(1.0f, 1.0f);
+				gl.glVertex3f(1.1f, 1.1f, 0.0f); // Top Right
+				gl.glTexCoord2f(0.0f, 1.0f);
+				gl.glVertex3f(-1.1f, 1.1f, 0.0f); // Top Left
+				gl.glEnd(); // Done Drawing The Quad
+				myTextures[4].disable();
+			} else // Otherwise
+			{
+				if (masking) // Is Masking On?
+				{
+					myTextures[1].enable();
+					myTextures[1].bind();
+					gl.glBegin(GL.GL_QUADS); // Start Drawing A Textured Quad
+					gl.glTexCoord2f(roll + 0.0f, 0.0f);
+					gl.glVertex3f(-1.1f, -1.1f, 0.0f); // Bottom Left
+					gl.glTexCoord2f(roll + 4.0f, 0.0f);
+					gl.glVertex3f(1.1f, -1.1f, 0.0f); // Bottom Right
+					gl.glTexCoord2f(roll + 4.0f, 4.0f);
+					gl.glVertex3f(1.1f, 1.1f, 0.0f); // Top Right
+					gl.glTexCoord2f(roll + 0.0f, 4.0f);
+					gl.glVertex3f(-1.1f, 1.1f, 0.0f); // Top Left
+					gl.glEnd(); // Done Drawing The Quad
+					myTextures[1].disable();
+				}
+
+				gl.glBlendFunc(GL.GL_ONE, GL.GL_ONE); // Copy Image 1 Color To
+														// The Screen
+
+				myTextures[2].enable();
+				myTextures[2].bind();
+
+				gl.glBegin(GL.GL_QUADS); // Start Drawing A Textured Quad
+				gl.glTexCoord2f(roll + 0.0f, 0.0f);
+				gl.glVertex3f(-1.1f, -1.1f, 0.0f); // Bottom Left
+				gl.glTexCoord2f(roll + 4.0f, 0.0f);
+				gl.glVertex3f(1.1f, -1.1f, 0.0f); // Bottom Right
+				gl.glTexCoord2f(roll + 4.0f, 4.0f);
+				gl.glVertex3f(1.1f, 1.1f, 0.0f); // Top Right
+				gl.glTexCoord2f(roll + 0.0f, 4.0f);
+				gl.glVertex3f(-1.1f, 1.1f, 0.0f); // Top Left
+				gl.glEnd(); // Done Drawing The Quad
+				myTextures[2].disable();
+			}
+
+			gl.glEnable(GL.GL_DEPTH_TEST); // Enable Depth Testing
+			gl.glDisable(GL.GL_BLEND); // Disable Blending
+
+			roll += 0.002f; // Increase Our Texture Roll Variable
+			if (roll > 1.0f) // Is Roll Greater Than One
+			{
+				roll -= 1.0f; // Subtract 1 From Roll
+			}
+
 		}
 
 		/**
@@ -169,14 +233,37 @@ public class Lesson06 {
 			final GL gl = gLDrawable.getGL();
 			glu = new GLU(); // get GL Utilities
 
-			String resourceName = "nehe/lesson6/data/NeHe.png";
-			URL url = getResource(resourceName);
-			if (url == null) {
-				throw new RuntimeException("Error reading resource "
-						+ resourceName);
+			String resourceName1 = "nehe/lesson20/data/logo.bmp";
+			String resourceName2 = "nehe/lesson20/data/image1.bmp";
+			String resourceName3 = "nehe/lesson20/data/mask1.bmp";
+			String resourceName4 = "nehe/lesson20/data/image2.bmp";
+			String resourceName5 = "nehe/lesson20/data/mask2.bmp";
+			URL url1 = getResource(resourceName1);
+			URL url2 = getResource(resourceName2);
+			URL url3 = getResource(resourceName3);
+			URL url4 = getResource(resourceName4);
+			URL url5 = getResource(resourceName5);
+			if (url1 == null || url2 == null || url3 == null || url4 == null
+					|| url5 == null) {
+				throw new RuntimeException("Error reading 5 resources");
 			}
 			try {
-				myTexture = TextureIO.newTexture(url, false, ".png");
+				BufferedImage tBufferedImage = ImageIO.read(new File(url1
+						.getFile()));
+				ImageUtil.flipImageVertically(tBufferedImage);
+				myTextures[0] = TextureIO.newTexture(tBufferedImage, true);
+				tBufferedImage = ImageIO.read(new File(url2.getFile()));
+				ImageUtil.flipImageVertically(tBufferedImage);
+				myTextures[1] = TextureIO.newTexture(url2, false, ".bmp");
+				tBufferedImage = ImageIO.read(new File(url3.getFile()));
+				ImageUtil.flipImageVertically(tBufferedImage);
+				myTextures[2] = TextureIO.newTexture(url3, false, ".bmp");
+				tBufferedImage = ImageIO.read(new File(url4.getFile()));
+				ImageUtil.flipImageVertically(tBufferedImage);
+				myTextures[3] = TextureIO.newTexture(url4, false, ".bmp");
+				tBufferedImage = ImageIO.read(new File(url5.getFile()));
+				ImageUtil.flipImageVertically(tBufferedImage);
+				myTextures[4] = TextureIO.newTexture(url5, false, ".bmp");
 			} catch (GLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -194,12 +281,12 @@ public class Lesson06 {
 //																		// Nice
 //																		// Perspective
 //																		// Calculations
-//			gl.glEnable(GL.GL_TEXTURE_2D);
-			gLDrawable.addKeyListener(this);
-			texture = genTexture(gl);
-//			gl.glBindTexture(GL.GL_TEXTURE_2D, texture);
-//			BufferedImage img = readPNGImage(resourceName);
-//			makeRGBTexture(gl, glu, img, GL.GL_TEXTURE_2D, false);
+			gl.glEnable(GL.GL_TEXTURE_2D);
+			// gLDrawable.addKeyListener(this);
+			// texture = genTexture(gl);
+			// gl.glBindTexture(GL.GL_TEXTURE_2D, texture);
+			// BufferedImage img = readPNGImage(resourceName);
+			// makeRGBTexture(gl, glu, img, GL.GL_TEXTURE_2D, false);
 //			gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER,
 //					GL.GL_LINEAR);
 //			gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER,
@@ -236,7 +323,8 @@ public class Lesson06 {
 			gl.glViewport(0, 0, width, height);
 			gl.glMatrixMode(GL.GL_PROJECTION);
 			gl.glLoadIdentity();
-			glu.gluPerspective(45.0f, h, 1.0, 20.0);
+			// glu.gluPerspective(45.0f, h, 1.0, 20.0);
+			glu.gluPerspective(45.0f, h, 0.1f, 100.0f);
 			gl.glMatrixMode(GL.GL_MODELVIEW);
 			gl.glLoadIdentity();
 		}
@@ -249,9 +337,19 @@ public class Lesson06 {
 		 *            The KeyEvent.
 		 */
 		public void keyPressed(KeyEvent e) {
-			if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+			switch (e.getKeyCode()) {
+			case KeyEvent.VK_ESCAPE:
 				animator.stop();
 				System.exit(0);
+				break;
+			case KeyEvent.VK_SPACE:
+				scene = !scene;
+				System.out.println("scene=" + scene);
+				break;
+			case KeyEvent.VK_M:
+				masking = !masking;
+				System.out.println("masking=" + masking);
+				break;
 			}
 		}
 
@@ -374,7 +472,9 @@ public class Lesson06 {
 		Frame frame = new Frame("Lesson 6: Texture Mapping");
 		// Create the OpenGL rendering canvas
 		GLCanvas canvas = new GLCanvas(); // heavy-weight GLCanvas
-		canvas.addGLEventListener(new Renderer());
+		Renderer renderer = new Renderer();
+		canvas.addGLEventListener(renderer);
+		canvas.addKeyListener(renderer);
 		frame.add(canvas);
 		frame.setSize(640, 480);
 		animator = new Animator(canvas);
