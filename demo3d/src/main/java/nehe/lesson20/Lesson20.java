@@ -109,7 +109,7 @@ public class Lesson20 {
 				//////////////////////////
 				//////////////////////////
 				//////////////////////////
-				gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE);
+				//gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE);
 				//gl.glBlendFunc(GL.GL_DST_COLOR, GL.GL_ZERO); // Blend Screen
 																// Color With
 																// Zero (Black)
@@ -252,18 +252,22 @@ public class Lesson20 {
 						.getFile()));
 				ImageUtil.flipImageVertically(tBufferedImage);
 				myTextures[0] = TextureIO.newTexture(tBufferedImage, true);
+				
 				tBufferedImage = ImageIO.read(new File(url2.getFile()));
 				ImageUtil.flipImageVertically(tBufferedImage);
-				myTextures[1] = TextureIO.newTexture(url2, false, ".bmp");
+				myTextures[1] = TextureIO.newTexture(tBufferedImage, false);
+				
 				tBufferedImage = ImageIO.read(new File(url3.getFile()));
 				ImageUtil.flipImageVertically(tBufferedImage);
-				myTextures[2] = TextureIO.newTexture(url3, false, ".bmp");
+				myTextures[2] = TextureIO.newTexture(tBufferedImage, false);
+				
 				tBufferedImage = ImageIO.read(new File(url4.getFile()));
 				ImageUtil.flipImageVertically(tBufferedImage);
-				myTextures[3] = TextureIO.newTexture(url4, false, ".bmp");
+				myTextures[3] = TextureIO.newTexture(tBufferedImage, false);
+				
 				tBufferedImage = ImageIO.read(new File(url5.getFile()));
 				ImageUtil.flipImageVertically(tBufferedImage);
-				myTextures[4] = TextureIO.newTexture(url5, false, ".bmp");
+				myTextures[4] = TextureIO.newTexture(tBufferedImage, false);
 			} catch (GLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
