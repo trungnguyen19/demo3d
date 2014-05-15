@@ -7,11 +7,10 @@
 
 package nehe.lesson17.LoadImageTypes;
 
-import java.io.*;
-import java.io.File;
 import java.awt.Image;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.net.URL;
 
 public class LoadBMPImages {

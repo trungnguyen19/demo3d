@@ -1,12 +1,12 @@
 package nehe.lesson08;
 
-import javax.imageio.ImageIO;
-import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.awt.image.PixelGrabber;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.ByteBuffer;
+
+import javax.imageio.ImageIO;
 
 class TextureReader {
     public static Texture readTexture(String filename) throws IOException {

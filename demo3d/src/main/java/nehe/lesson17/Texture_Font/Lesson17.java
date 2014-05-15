@@ -34,7 +34,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 
 import javax.imageio.ImageIO;
 import javax.media.opengl.GL;
@@ -42,7 +41,6 @@ import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCanvas;
 import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLDrawable;
-import javax.media.opengl.GLDrawableFactory;
 //import net.java.games.jogl.*;   //JoGL Lib Imports
 //import net.java.games.jogl.util.*; //Utilities of the Lib to import
 import javax.media.opengl.GLEventListener;

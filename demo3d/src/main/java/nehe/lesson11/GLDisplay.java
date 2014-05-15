@@ -14,8 +14,6 @@ import java.awt.event.MouseMotionListener;
 import java.util.TimerTask;
 
 import javax.media.opengl.GLCanvas;
-import javax.media.opengl.GLCapabilities;
-import javax.media.opengl.GLDrawableFactory;
 import javax.media.opengl.GLEventListener;
 import javax.swing.JFrame;
 

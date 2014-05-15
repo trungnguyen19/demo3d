@@ -15,7 +15,6 @@ import java.awt.IllegalComponentStateException;
 
 import javax.media.opengl.GLCanvas;
 import javax.media.opengl.GLCapabilities;
-import javax.media.opengl.GLDrawableFactory;
 import javax.swing.JOptionPane;
 // Import classes needed for JOGL.
 //import net.java.games.jogl.GLCanvas;
