@@ -197,6 +197,7 @@ class Renderer implements GLEventListener {
 																	// Perspective
 																	// Calculations
 
+//        gl.glLightfv(GL.GL_LIGHT1, GL.GL_AMBIENT, (FloatBuffer)temp.asFloatBuffer().put(lightAmbient).flip());              // Setup The Ambient Light
 		FloatBuffer unpackedPixels = FloatBuffer.allocate(lightAmbient.length);
 		unpackedPixels.put(lightAmbient);
 		unpackedPixels.rewind();
