@@ -42,7 +42,6 @@ import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCanvas;
 import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLDrawable;
-import javax.media.opengl.GLDrawableFactory;
 import javax.media.opengl.GLEventListener;
 import javax.media.opengl.glu.GLU;
 import javax.media.opengl.glu.GLUquadric;
@@ -55,7 +54,7 @@ import com.sun.opengl.util.GLUT;
 
 public class Lesson27 implements KeyListener {
 
-	private DisplayMode m_oOldDisplayMode;
+	// private DisplayMode m_oOldDisplayMode;
 	GraphicsDevice defaultScreen = null;
 
 	nehe.lesson27.object3D.glObject obj;
@@ -147,7 +146,7 @@ public class Lesson27 implements KeyListener {
 	}
 
 	public static void main(String[] args) {
-		Lesson27 demo = new Lesson27();
+		new Lesson27();
 	}
 
 	/**
@@ -213,7 +212,8 @@ public class Lesson27 implements KeyListener {
 					+ "screen mode: " + eHeadless.getMessage());
 			return;
 		}
-		m_oOldDisplayMode = defaultScreen.getDisplayMode(); // The main window.
+		// m_oOldDisplayMode = defaultScreen.getDisplayMode(); // The main
+		// window.
 
 		if (fullScreen == 0) {
 			GraphicsEnvironment.getLocalGraphicsEnvironment()
@@ -231,7 +231,6 @@ public class Lesson27 implements KeyListener {
 
 	public class initRenderer implements GLEventListener {
 		public void init(GLAutoDrawable drawable) {
-
 			gl = drawable.getGL();
 			glu = new GLU();// drawable.getGLU();
 			glut = new GLUT();
@@ -242,54 +241,54 @@ public class Lesson27 implements KeyListener {
 				System.exit(0);
 			}
 
-			gl.glShadeModel(gl.GL_SMOOTH); // Enable Smooth Shading
+			gl.glShadeModel(GL.GL_SMOOTH); // Enable Smooth Shading
 			gl.glClearColor(0.0f, 0.0f, 0.0f, 0.5f); // Black Background
 			gl.glClearDepth(1.0f); // Depth Buffer Setup
 			gl.glClearStencil(0); // Stencil Buffer Setup
-			gl.glEnable(gl.GL_DEPTH_TEST); // Enables Depth Testing
-			gl.glDepthFunc(gl.GL_LEQUAL); // The Type Of Depth Testing To Do
-			gl.glHint(gl.GL_PERSPECTIVE_CORRECTION_HINT, gl.GL_NICEST); // Really
+			gl.glEnable(GL.GL_DEPTH_TEST); // Enables Depth Testing
+			gl.glDepthFunc(GL.GL_LEQUAL); // The Type Of Depth Testing To Do
+			gl.glHint(GL.GL_PERSPECTIVE_CORRECTION_HINT, GL.GL_NICEST); // Really
 																		// Nice
 																		// Perspective
 																		// Calculations
 
 			ByteBuffer temp = ByteBuffer.allocateDirect(16);
 			temp.order(ByteOrder.nativeOrder());
-			gl.glLightfv(gl.GL_LIGHT1, gl.GL_POSITION, (FloatBuffer) temp
+			gl.glLightfv(GL.GL_LIGHT1, GL.GL_POSITION, (FloatBuffer) temp
 					.asFloatBuffer().put(LightPos).flip()); // Set Light1
 															// Position
-			gl.glLightfv(gl.GL_LIGHT1, gl.GL_AMBIENT, (FloatBuffer) temp
+			gl.glLightfv(GL.GL_LIGHT1, GL.GL_AMBIENT, (FloatBuffer) temp
 					.asFloatBuffer().put(LightAmb).flip()); // Set Light1
 															// Ambience
-			gl.glLightfv(gl.GL_LIGHT1, gl.GL_DIFFUSE, (FloatBuffer) temp
+			gl.glLightfv(GL.GL_LIGHT1, GL.GL_DIFFUSE, (FloatBuffer) temp
 					.asFloatBuffer().put(LightDif).flip()); // Set Light1
 															// Diffuse
-			gl.glLightfv(gl.GL_LIGHT1, gl.GL_SPECULAR, (FloatBuffer) temp
+			gl.glLightfv(GL.GL_LIGHT1, GL.GL_SPECULAR, (FloatBuffer) temp
 					.asFloatBuffer().put(LightSpc).flip()); // Set Light1
 															// Specular
-			gl.glEnable(gl.GL_LIGHT1); // Enable Light1
-			gl.glEnable(gl.GL_LIGHTING); // Enable Lighting
+			gl.glEnable(GL.GL_LIGHT1); // Enable Light1
+			gl.glEnable(GL.GL_LIGHTING); // Enable Lighting
 
-			gl.glMaterialfv(gl.GL_FRONT, gl.GL_AMBIENT, (FloatBuffer) temp
+			gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT, (FloatBuffer) temp
 					.asFloatBuffer().put(MatAmb).flip()); // Set Material
 															// Ambience
-			gl.glMaterialfv(gl.GL_FRONT, gl.GL_DIFFUSE, (FloatBuffer) temp
+			gl.glMaterialfv(GL.GL_FRONT, GL.GL_DIFFUSE, (FloatBuffer) temp
 					.asFloatBuffer().put(MatDif).flip()); // Set Material
 															// Diffuse
-			gl.glMaterialfv(gl.GL_FRONT, gl.GL_SPECULAR, (FloatBuffer) temp
+			gl.glMaterialfv(GL.GL_FRONT, GL.GL_SPECULAR, (FloatBuffer) temp
 					.asFloatBuffer().put(MatSpc).flip()); // Set Material
 															// Specular
-			gl.glMaterialfv(gl.GL_FRONT, gl.GL_SHININESS, (FloatBuffer) temp
+			gl.glMaterialfv(GL.GL_FRONT, GL.GL_SHININESS, (FloatBuffer) temp
 					.asFloatBuffer().put(MatShn).flip()); // Set Material
 															// Shininess
 
-			gl.glCullFace(gl.GL_BACK); // Set Culling Face To Back Face
-			gl.glEnable(gl.GL_CULL_FACE); // Enable Culling
+			gl.glCullFace(GL.GL_BACK); // Set Culling Face To Back Face
+			gl.glEnable(GL.GL_CULL_FACE); // Enable Culling
 			gl.glClearColor(0.1f, 1.0f, 0.5f, 1.0f); // Set Clear Color
 														// (Greenish Color)
 
 			q = glu.gluNewQuadric(); // Initialize Quadratic
-			glu.gluQuadricNormals(q, gl.GL_SMOOTH); // Enable Smooth Normal
+			glu.gluQuadricNormals(q, GL.GL_SMOOTH); // Enable Smooth Normal
 													// Generation
 			glu.gluQuadricTexture(q, false); // Disable Auto Texture Coords
 			loop = new Animator(drawable);// glDrawable);
@@ -309,7 +308,7 @@ public class Lesson27 implements KeyListener {
 
 			ByteBuffer temp = ByteBuffer.allocateDirect(16);
 			temp.order(ByteOrder.nativeOrder());
-			gl.glLightfv(gl.GL_LIGHT1, gl.GL_POSITION, (FloatBuffer) temp
+			gl.glLightfv(GL.GL_LIGHT1, GL.GL_POSITION, (FloatBuffer) temp
 					.asFloatBuffer().put(LightPos).flip()); // Position Light1
 
 			gl.glTranslatef(SpherePos[0], SpherePos[1], SpherePos[2]); // Position
@@ -328,13 +327,18 @@ public class Lesson27 implements KeyListener {
 			gl.glLoadIdentity(); // Reset Matrix
 			gl.glRotatef(-yrot, 0.0f, 1.0f, 0.0f); // Rotate By -yrot On Y Axis
 			gl.glRotatef(-xrot, 1.0f, 0.0f, 0.0f); // Rotate By -xrot On X Axis
-			
-			temp = ByteBuffer.allocateDirect(16*16);
+
+			temp = ByteBuffer.allocateDirect(16 * 16);
 			temp.order(ByteOrder.nativeOrder());
-			gl.glGetFloatv(gl.GL_MODELVIEW_MATRIX, (FloatBuffer) temp
-					.asFloatBuffer().put(Minv.e)); // Retrieve ModelView
-															// Matrix (Stores In
-															// Minv)
+
+			FloatBuffer fb = FloatBuffer.allocate(16);
+			gl.glGetFloatv(GL.GL_MODELVIEW_MATRIX, fb); // Retrieve ModelView
+														// Matrix (Stores In
+														// Minv)
+			for (int i = 0; i < 16; i++) {
+				Minv.e[i] = fb.get(i);
+			}
+
 			lp.e[0] = LightPos[0]; // Store Light Position X In lp[0]
 			lp.e[1] = LightPos[1]; // Store Light Position Y In lp[1]
 			lp.e[2] = LightPos[2]; // Store Light Position Z In lp[2]
@@ -346,9 +350,12 @@ public class Lesson27 implements KeyListener {
 																// ObjPos[]
 																// Values (X, Y,
 																// Z)
-			gl.glGetFloatv(gl.GL_MODELVIEW_MATRIX, (FloatBuffer) temp
-					.asFloatBuffer().put(Minv.e).flip()); // Retrieve ModelView
-															// Matrix From Minv
+			gl.glGetFloatv(GL.GL_MODELVIEW_MATRIX, fb); // Retrieve ModelView
+														// Matrix From Minv
+			for (int i = 0; i < 16; i++) {
+				Minv.e[i] = fb.get(i);
+			}
+
 			wlp.e[0] = 0.0f; // World Local Coord X To 0
 			wlp.e[1] = 0.0f; // World Local Coord Y To 0
 			wlp.e[2] = 0.0f; // World Local Coord Z To 0
@@ -376,7 +383,7 @@ public class Lesson27 implements KeyListener {
 											// Based On The Silhouette
 
 			gl.glColor4f(0.7f, 0.4f, 0.0f, 1.0f); // Set Color To Purplish Blue
-			gl.glDisable(gl.GL_LIGHTING); // Disable Lighting
+			gl.glDisable(GL.GL_LIGHTING); // Disable Lighting
 			gl.glDepthMask(false); // Disable Depth Mask
 			gl.glTranslatef(lp.e[0], lp.e[1], lp.e[2]); // Translate To Light's
 														// Position
@@ -385,7 +392,7 @@ public class Lesson27 implements KeyListener {
 														// System
 			glu.gluSphere(q, 0.2f, 16, 8); // Draw A Little Yellow Sphere
 											// (Represents Light)
-			gl.glEnable(gl.GL_LIGHTING); // Enable Lighting
+			gl.glEnable(GL.GL_LIGHTING); // Enable Lighting
 			gl.glDepthMask(true); // Enable Depth Mask
 
 			xrot += xspeed; // Increase xrot By xspeed
@@ -401,12 +408,12 @@ public class Lesson27 implements KeyListener {
 			height = (height == 0) ? 1 : height;
 
 			gl.glViewport(0, 0, width, height);
-			gl.glMatrixMode(gl.GL_PROJECTION);
+			gl.glMatrixMode(GL.GL_PROJECTION);
 			gl.glLoadIdentity();
 
 			// Calculate The Aspect Ratio Of The Window
 			glu.gluPerspective(45.0f, (float) width / height, 0.001f, 100.0f);
-			gl.glMatrixMode(gl.GL_MODELVIEW);
+			gl.glMatrixMode(GL.GL_MODELVIEW);
 			gl.glLoadIdentity();
 		}
 
@@ -417,7 +424,7 @@ public class Lesson27 implements KeyListener {
 
 	void DrawGLRoom() { // Draw The Room (Box)
 
-		gl.glBegin(gl.GL_QUADS); // Begin Drawing Quads
+		gl.glBegin(GL.GL_QUADS); // Begin Drawing Quads
 		// Floor
 		gl.glNormal3f(0.0f, 1.0f, 0.0f); // Normal Pointing Up
 		gl.glVertex3f(-10.0f, -10.0f, -20.0f); // Back Left
