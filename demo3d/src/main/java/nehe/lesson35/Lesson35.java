@@ -44,6 +44,23 @@ public class Lesson35 {
 
 	static class Renderer implements GLEventListener, KeyListener {
 
+		float tex_param_s = 1.0f;
+		float tex_param_t = 1.0f;
+
+		Byte[] ui_image_copy;
+
+		// variables
+		int win_width = 512;
+		int win_height = 512;
+		int TEX_WIDTH = 256;
+		int TEX_HEIGHT = 256;
+
+		int msec;
+		int width; // width and height of video stream
+		int height;
+		double stream_fps = 0; // fps (for playback, since we don't use avi
+								// player)
+
 		// #if AVIFILE_VERSION_MINOR > 6
 		final float ZERO = 0.0f;
 		final float ONE = 1.0f;
@@ -72,7 +89,7 @@ public class Lesson35 {
 
 		int cube_list;
 		double tex_mat[];
-		
+
 		GLUquadric quadratic;
 
 		/**
@@ -155,33 +172,41 @@ public class Lesson35 {
 
 			case 1: // Effect 1 - Sphere
 				gl.glRotatef(angle * 1.3f, 1.0f, 0.0f, 0.0f); // Rotate On The
-															// X-Axis By angle
+																// X-Axis By
+																// angle
 				gl.glRotatef(angle * 1.1f, 0.0f, 1.0f, 0.0f); // Rotate On The
-															// Y-Axis By angle
+																// Y-Axis By
+																// angle
 				gl.glRotatef(angle * 1.2f, 0.0f, 0.0f, 1.0f); // Rotate On The
-															// Z-Axis By angle
+																// Z-Axis By
+																// angle
 				glu.gluSphere(quadratic, 1.3f, 20, 20); // Draw A Sphere
 				break; // Done Drawing Sphere
 
 			case 2: // Effect 2 - Cylinder
 				gl.glRotatef(angle * 1.3f, 1.0f, 0.0f, 0.0f); // Rotate On The
-															// X-Axis By angle
+																// X-Axis By
+																// angle
 				gl.glRotatef(angle * 1.1f, 0.0f, 1.0f, 0.0f); // Rotate On The
-															// Y-Axis By angle
+																// Y-Axis By
+																// angle
 				gl.glRotatef(angle * 1.2f, 0.0f, 0.0f, 1.0f); // Rotate On The
-															// Z-Axis By angle
+																// Z-Axis By
+																// angle
 				gl.glTranslatef(0.0f, 0.0f, -1.5f); // Center The Cylinder
 				glu.gluCylinder(quadratic, 1.0f, 1.0f, 3.0f, 32, 32); // Draw A
-																	// Cylinder
+																		// Cylinder
 				break; // Done Drawing Cylinder
 			}
 
 			if (env) // Environment Mapping Enabled?
 			{
-				gl.glDisable(GL.GL_TEXTURE_GEN_S); // Disable Texture Coord Generation
-												// For S (NEW)
-				gl.glDisable(GL.GL_TEXTURE_GEN_T); // Disable Texture Coord Generation
-												// For T (NEW)
+				gl.glDisable(GL.GL_TEXTURE_GEN_S); // Disable Texture Coord
+													// Generation
+													// For S (NEW)
+				gl.glDisable(GL.GL_TEXTURE_GEN_T); // Disable Texture Coord
+													// Generation
+													// For T (NEW)
 			}
 		}
 
@@ -200,63 +225,193 @@ public class Lesson35 {
 				boolean modeChanged, boolean deviceChanged) {
 		}
 
-		private void baseInit() {
+		private void baseInit(GLAutoDrawable gLDrawable) {
 			// ("data/Face2.avi")
-//				    if (argc != 1) {
-//				      cout << "Opening " << argv[1] << endl;
-//				      avifile = avm::CreateReadFile(argv[1]);
-//				    } else
-//				      avifile = avm::CreateReadFile;
-//
-//				    if (avifile->IsOpened())
-//				      avistream = avifile->GetStream(0, avm::IReadStream::Video );
-//				    else
-//				      throw FileNotOpen("Error opening avi-file");
-//
-//				    avistream->StartStreaming();
-//				    streaminfo = avistream->GetStreamInfo();
-//				    width      = streaminfo->GetVideoWidth();
-//				    height     = streaminfo->GetVideoHeight();
-//				    stream_fps = streaminfo->GetFps();
-//
-//				    // adjust texture to video file (256 is standard (see declaration above))
-//				    if (width > 256)
-//				      TEX_WIDTH = 512;
-//				    else if (width > 512)
-//				      TEX_WIDTH = 1024;
-//				    else if (width > 1024)
-//				      TEX_WIDTH = 2048;
-//
-//				    if (height > 256)
-//				      TEX_HEIGHT = 512;
-//				    else if (height > 512)
-//				      TEX_HEIGHT = 1024;
-//				    else if (height > 1024)
-//				      TEX_HEIGHT = 2048;
-//
-//				    tex_param_s = static_cast<GLfloat>(width)  / static_cast<GLfloat>(TEX_WIDTH);
-//				    tex_param_t = static_cast<GLfloat>(height) / static_cast<GLfloat>(TEX_HEIGHT);
-//
-//				    ui_image_copy = new uint8_t[TEX_WIDTH*TEX_HEIGHT*3*sizeof(uint8_t)];
-//
-//				    /* create texture transform matrix (avi file must not be 2^n by 2^m but a texture has to be) */
-//				    tex_mat = new GLdouble[16];
-//				    for (int i=0; i<16; ++i) tex_mat[i] = 0.0;
-//				    tex_mat[0]  = tex_param_s;
-//				    tex_mat[5]  = tex_param_t;
-//				    tex_mat[10] = tex_mat[15] = 1.0;
-//
-//				    initialize();       // init gluQuadrics, glTexture, ... (needs also tex_param_s and tex_param_t)
-//
-//
-//				    // this will call our timer_func in 1 second (only once)
-//				    glutTimerFunc(1000, timer_func, 0);
-//
-//				    glutMainLoop();
-//				    return 0;
-//			
+			// if (argc != 1) {
+			// cout << "Opening " << argv[1] << endl;
+			// avifile = avm::CreateReadFile(argv[1]);
+			// } else
+			// avifile = avm::CreateReadFile;
+			//
+			// if (avifile->IsOpened())
+			// avistream = avifile->GetStream(0, avm::IReadStream::Video );
+			// else
+			// throw FileNotOpen("Error opening avi-file");
+			//
+			// avistream->StartStreaming();
+			// streaminfo = avistream->GetStreamInfo();
+			// width = streaminfo->GetVideoWidth();
+			// height = streaminfo->GetVideoHeight();
+			// stream_fps = streaminfo->GetFps();
+
+			// adjust texture to video file (256 is standard (see declaration
+			// above))
+			if (width > 256)
+				TEX_WIDTH = 512;
+			else if (width > 512)
+				TEX_WIDTH = 1024;
+			else if (width > 1024)
+				TEX_WIDTH = 2048;
+
+			if (height > 256)
+				TEX_HEIGHT = 512;
+			else if (height > 512)
+				TEX_HEIGHT = 1024;
+			else if (height > 1024)
+				TEX_HEIGHT = 2048;
+
+			tex_param_s = (float) width / (float) TEX_WIDTH;
+			tex_param_t = (float) height / (float) TEX_HEIGHT;
+
+			ui_image_copy = new Byte[TEX_WIDTH * TEX_HEIGHT * 3 * Byte.SIZE];
+
+			/*
+			 * create texture transform matrix (avi file must not be 2^n by 2^m
+			 * but a texture has to be)
+			 */
+			tex_mat = new double[16];
+			for (int i = 0; i < 16; ++i)
+				tex_mat[i] = 0.0;
+			tex_mat[0] = tex_param_s;
+			tex_mat[5] = tex_param_t;
+			tex_mat[10] = tex_mat[15] = 1.0;
+
+			initialize(gLDrawable); // init gluQuadrics, glTexture, ... (needs
+									// also tex_param_s and tex_param_t)
+
+			// this will call our timer_func in 1 second (only once)
+			// glu.glutTimerFunc(1000, timer_func, 0);
 		}
-		
+
+		// let's set some things
+		private void initialize(GLAutoDrawable gLDrawable) {
+			final GL gl = gLDrawable.getGL();
+
+			quadratic = glu.gluNewQuadric(); // Create A Pointer To The Quadric
+												// Object
+			glu.gluQuadricNormals(quadratic, GLU.GLU_SMOOTH); // Create Smooth
+																// Normals
+			glu.gluQuadricTexture(quadratic, true); // Create Texture Coords
+
+			gl.glClearColor(0.0f, 0.0f, 0.0f, 0.5f); // Black Background
+			gl.glClearDepth(1.0f); // Depth Buffer Setup
+			gl.glDepthFunc(GL.GL_LEQUAL); // The Type Of Depth Testing (Less Or
+											// Equal)
+			gl.glEnable(GL.GL_DEPTH_TEST); // Enable Depth Testing
+			gl.glShadeModel(GL.GL_SMOOTH); // Select Smooth Shading
+			gl.glHint(GL.GL_PERSPECTIVE_CORRECTION_HINT, GL.GL_NICEST);
+
+			gl.glClearColor(0.0f, 0.0f, 0.0f, 0.5f); // Black Background
+			gl.glClearDepth(1.0f); // Depth Buffer Setup
+			gl.glDepthFunc(GL.GL_LEQUAL); // The Type Of Depth Testing (Less Or
+											// Equal)
+			gl.glEnable(GL.GL_DEPTH_TEST); // Enable Depth Testing
+			gl.glShadeModel(GL.GL_SMOOTH); // Select Smooth Shading
+			gl.glHint(GL.GL_PERSPECTIVE_CORRECTION_HINT, GL.GL_NICEST);
+
+			gl.glMatrixMode(GL.GL_PROJECTION);
+			glu.gluPerspective(60.0, 1.0, 0.2, 40.0); // field of fiew, aspect,
+														// near, far
+			gl.glMatrixMode(GL.GL_MODELVIEW);
+
+			// gl.glGenTextures(1, &texture); // generate OpenGL texture object
+			gl.glEnable(GL.GL_TEXTURE_2D);
+			gl.glBindTexture(GL.GL_TEXTURE_2D, texture); // use previously
+															// created texture
+															// object and set
+															// options
+			gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER,
+					GL.GL_NEAREST);
+			gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER,
+					GL.GL_NEAREST);
+			gl.glTexGeni(GL.GL_S, GL.GL_TEXTURE_GEN_MODE, GL.GL_SPHERE_MAP); // how
+																				// to
+																				// set
+																				// texture
+																				// coords
+			gl.glTexGeni(GL.GL_T, GL.GL_TEXTURE_GEN_MODE, GL.GL_SPHERE_MAP);
+
+			// display lists are much faster than drawing directly
+			cube_list = gl.glGenLists(1); // generate display list
+			gl.glNewList(cube_list, GL.GL_COMPILE_AND_EXECUTE); // fill display
+																// list
+			gl.glBegin(GL.GL_QUADS); // Begin Drawing A Cube
+			// Front Face
+			gl.glNormal3f(0.0f, 0.0f, 0.5f);
+			gl.glTexCoord2f(0.0f, 0.0f);
+			gl.glVertex3f(-1.0f, -1.0f, 1.0f);
+			gl.glTexCoord2f(1.0f, 0.0f);
+			gl.glVertex3f(1.0f, -1.0f, 1.0f);
+			gl.glTexCoord2f(1.0f, 1.0f);
+			gl.glVertex3f(1.0f, 1.0f, 1.0f);
+			gl.glTexCoord2f(0.0f, 1.0f);
+			gl.glVertex3f(-1.0f, 1.0f, 1.0f);
+			// Back Face 0
+			gl.glNormal3f(0.0f, 0.0f, -0.5f);
+			gl.glTexCoord2f(1.0f, 0.0f);
+			gl.glVertex3f(-1.0f, -1.0f, -1.0f);
+			gl.glTexCoord2f(1.0f, 1.0f);
+			gl.glVertex3f(-1.0f, 1.0f, -1.0f);
+			gl.glTexCoord2f(0.0f, 1.0f);
+			gl.glVertex3f(1.0f, 1.0f, -1.0f);
+			gl.glTexCoord2f(0.0f, 0.0f);
+			gl.glVertex3f(1.0f, -1.0f, -1.0f);
+			// Top Face
+			gl.glNormal3f(0.0f, 0.5f, 0.0f);
+			gl.glTexCoord2f(0.0f, 1.0f);
+			gl.glVertex3f(-1.0f, 1.0f, -1.0f);
+			gl.glTexCoord2f(0.0f, 0.0f);
+			gl.glVertex3f(-1.0f, 1.0f, 1.0f);
+			gl.glTexCoord2f(1.0f, 0.0f);
+			gl.glVertex3f(1.0f, 1.0f, 1.0f);
+			gl.glTexCoord2f(1.0f, 1.0f);
+			gl.glVertex3f(1.0f, 1.0f, -1.0f);
+			// Bottom Face
+			gl.glNormal3f(0.0f, -0.5f, 0.0f);
+			gl.glTexCoord2f(1.0f, 1.0f);
+			gl.glVertex3f(-1.0f, -1.0f, -1.0f);
+			gl.glTexCoord2f(0.0f, 1.0f);
+			gl.glVertex3f(1.0f, -1.0f, -1.0f);
+			gl.glTexCoord2f(0.0f, 0.0f);
+			gl.glVertex3f(1.0f, -1.0f, 1.0f);
+			gl.glTexCoord2f(1.0f, 0.0f);
+			gl.glVertex3f(-1.0f, -1.0f, 1.0f);
+			// Right Face
+			gl.glNormal3f(0.5f, 0.0f, 0.0f);
+			gl.glTexCoord2f(1.0f, 0.0f);
+			gl.glVertex3f(1.0f, -1.0f, -1.0f);
+			gl.glTexCoord2f(1.0f, 1.0f);
+			gl.glVertex3f(1.0f, 1.0f, -1.0f);
+			gl.glTexCoord2f(0.0f, 1.0f);
+			gl.glVertex3f(1.0f, 1.0f, 1.0f);
+			gl.glTexCoord2f(0.0f, 0.0f);
+			gl.glVertex3f(1.0f, -1.0f, 1.0f);
+			// Left Face
+			gl.glNormal3f(-0.5f, 0.0f, 0.0f);
+			gl.glTexCoord2f(0.0f, 0.0f);
+			gl.glVertex3f(-1.0f, -1.0f, -1.0f);
+			gl.glTexCoord2f(1.0f, 0.0f);
+			gl.glVertex3f(-1.0f, -1.0f, 1.0f);
+			gl.glTexCoord2f(1.0f, 1.0f);
+			gl.glVertex3f(-1.0f, 1.0f, 1.0f);
+			gl.glTexCoord2f(0.0f, 1.0f);
+			gl.glVertex3f(-1.0f, 1.0f, -1.0f);
+			gl.glEnd(); // Done Drawing Our Cube
+			gl.glEndList();
+
+			// set texture transform matrix to alter (here only to scale)
+			// texture coordinates
+			// (our video stream must not be 2^n by 2^m but our texture has to
+			// be)
+			gl.glMatrixMode(GL.GL_TEXTURE);
+
+			DoubleBuffer db = DoubleBuffer.allocate(16);
+			db.put(tex_mat);
+			gl.glLoadMatrixd(db);
+
+			gl.glMatrixMode(GL.GL_MODELVIEW);
+		}
+
 		/**
 		 * Called by the drawable immediately after the OpenGL context is
 		 * initialized for the first time. Can be used to perform one-time
@@ -266,14 +421,16 @@ public class Lesson35 {
 		 *            The GLDrawable object.
 		 */
 		public void init(GLAutoDrawable gLDrawable) {
-			baseInit();
-			
+			baseInit(gLDrawable);
+
 			final GL gl = gLDrawable.getGL();
 			glu = new GLU(); // get GL Utilities
 
-			 quadratic=glu.gluNewQuadric(); // Create A Pointer To The Quadric Object
-			 glu.gluQuadricNormals(quadratic, GLU.GLU_SMOOTH); // Create Smooth Normals
-			 glu.gluQuadricTexture(quadratic, true); // Create Texture Coords
+			quadratic = glu.gluNewQuadric(); // Create A Pointer To The Quadric
+												// Object
+			glu.gluQuadricNormals(quadratic, GLU.GLU_SMOOTH); // Create Smooth
+																// Normals
+			glu.gluQuadricTexture(quadratic, true); // Create Texture Coords
 
 			gl.glClearColor(0.0f, 0.0f, 0.0f, 0.5f); // Black Background
 			gl.glClearDepth(1.0f); // Depth Buffer Setup
