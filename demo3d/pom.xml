@@ -4,7 +4,19 @@
 	<groupId>com.trungnd10.3d</groupId>
 	<artifactId>demo3d</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<repositories>
+		<repository>
+			<id>xuggle repo</id>
+			<url>http://xuggle.googlecode.com/svn/trunk/repo/share/java/</url>
+		</repository>
+	</repositories>
 	<dependencies>
+		<dependency>
+			<groupId>xuggle</groupId>
+			<artifactId>xuggle-xuggler</artifactId>
+			<version>5.2</version>
+		</dependency>
+
 		<dependency>
 			<groupId>net.java.dev.jogl</groupId>
 			<artifactId>jogl</artifactId>
@@ -14,6 +26,11 @@
 			<groupId>java3d</groupId>
 			<artifactId>j3d-core-utils</artifactId>
 			<version>1.3.1</version>
+		</dependency>
+		<dependency>
+			<groupId>net.imagej</groupId>
+			<artifactId>ij</artifactId>
+			<version>1.49a</version>
 		</dependency>
 	</dependencies>
 </project>
