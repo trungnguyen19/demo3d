@@ -48,7 +48,7 @@ public class Lesson35 {
 		float tex_param_s = 1.0f;
 		float tex_param_t = 1.0f;
 
-		Byte[] ui_image_copy;
+		ByteBuffer ui_image_copy;
 
 		// variables
 		int win_width = 512;
@@ -212,6 +212,50 @@ public class Lesson35 {
 			}
 		}
 
+		void timer_func(GLAutoDrawable gLDrawable) {
+			timer_func(gLDrawable,0);
+		}
+		// OpenGL/GLUT functions
+		void timer_func(GLAutoDrawable gLDrawable, int which_timer) {
+			final GL gl = gLDrawable.getGL();
+
+		  // if we got signal for timer 0, read one frame and create a texture of it
+//		  if (which_timer == 0) {
+//
+//		    image = avistream->GetFrame(true);
+//		    if (!avistream->Eof() && image ) {
+		      //gluScaleImage( GL_RGB, width, height, GL_UNSIGNED_BYTE, image->Data(0),
+		      //               TEX_WIDTH, TEX_HEIGHT, GL_UNSIGNED_BYTE, ui_image_copy );
+
+		      // this is about 30-40 times faster then using gluScaleImage(...)
+		      // for (int j=0; j<height; ++j)
+		      //   memcpy(&ui_image_copy[j*TEX_WIDTH*3], image->At(0,j), width*sizeof(uint8_t)*3);
+
+		    // avifile < v0.7 swaps top and bottom, lets fix this
+//		#if AVIFILE_MINOR_VERSION < 7  
+//		      for (int j=0; j<height; ++j)
+//		        memcpy(&ui_image_copy[j*TEX_WIDTH*3], image->At(0, j), width*sizeof(uint8_t)*3);
+//		#else
+//		      for (int j=0; j<height; ++j)
+//		        memcpy(&ui_image_copy[j*TEX_WIDTH*3], image->At(0, height-j-1), width*sizeof(uint8_t)*3);
+//		#endif
+
+		      //glBindTexture( GL_TEXTURE_2D, texture );  // is done in initilaize() !
+		      // look at the GL_BGR (flips BGR video to RGB texture)
+		      gl.glTexImage2D ( GL.GL_TEXTURE_2D, 0, GL.GL_RGB, TEX_WIDTH, TEX_HEIGHT, 0,
+		    		  GL.GL_BGR, GL.GL_UNSIGNED_BYTE, ui_image_copy);
+
+//		      image->Release();
+//		    } else {
+//		      avistream->Seek(0);  // back to start to stream
+//		    }
+//
+//		    glutTimerFunc( (int) (1000.0f / stream_fps), timer_func, 0);  // re-set timer function
+//		    glutPostRedisplay();   // redraw our scene
+//		  }
+
+		}
+		
 		/**
 		 * Called when the display mode has been changed. <B>!! CURRENTLY
 		 * UNIMPLEMENTED IN JOGL !!</B>
@@ -265,12 +309,12 @@ public class Lesson35 {
 			tex_param_s = (float) width / (float) TEX_WIDTH;
 			tex_param_t = (float) height / (float) TEX_HEIGHT;
 
-			ui_image_copy = new Byte[TEX_WIDTH * TEX_HEIGHT * 3 * Byte.SIZE];
+			ui_image_copy = ByteBuffer.allocateDirect(TEX_WIDTH * TEX_HEIGHT * 3 * Byte.SIZE);//new Byte[TEX_WIDTH * TEX_HEIGHT * 3 * Byte.SIZE];
 
 			byte[] r = new byte[TEX_WIDTH * TEX_HEIGHT * 3 * Byte.SIZE];
 			new Random().nextBytes(r);
 			for (int i = 0; i < r.length; i++) {
-				ui_image_copy[i] = r[i];
+				ui_image_copy.put(i,r[i]);
 				// System.out.println("ui_image_copy[i]=" + ui_image_copy[i]);
 			}
 			System.out.println("TEX_WIDTH=" + TEX_WIDTH + ",TEX_HEIGHT="
@@ -633,6 +677,10 @@ public class Lesson35 {
 			case KeyEvent.VK_ESCAPE:
 				animator.stop();
 				System.exit(0);
+				break;
+			case KeyEvent.VK_T:
+				timer_func(gLDrawable);
+				System.out.println("test");
 				break;
 			case KeyEvent.VK_1:
 			case KeyEvent.VK_2:
