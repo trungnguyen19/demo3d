@@ -15,6 +15,7 @@ import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.DoubleBuffer;
+import java.util.Random;
 
 import javax.imageio.ImageIO;
 import javax.media.opengl.GL;
@@ -72,11 +73,10 @@ public class Lesson35 {
 		private float xrot; // X Rotation ( NEW )
 		private float yrot; // Y Rotation ( NEW )
 		private float zrot; // Z Rotation ( NEW )
-		private int texture;
+
+		Texture myTexture;
 
 		private GLU glu; // for the GL Utility
-
-		private Texture[] myTextures = new Texture[5];
 
 		private boolean scene, masking;
 
@@ -91,6 +91,8 @@ public class Lesson35 {
 		double tex_mat[];
 
 		GLUquadric quadratic;
+
+		private GLAutoDrawable gLDrawable;
 
 		/**
 		 * Called by the drawable to initiate OpenGL rendering by the client.
@@ -157,7 +159,7 @@ public class Lesson35 {
 
 			switch (effect) // Which Effect?
 			{
-			case 0: // Effect 0 - Cube
+			case 1: // Effect 0 - Cube
 				gl.glRotatef(angle * 1.3f, 1.0f, 0.0f, 0.0f); // Rotate On The
 																// X-Axis By
 																// angle
@@ -170,7 +172,7 @@ public class Lesson35 {
 				gl.glCallList(cube_list); // Draw cube via display list
 				break; // Done Effect 0
 
-			case 1: // Effect 1 - Sphere
+			case 2: // Effect 1 - Sphere
 				gl.glRotatef(angle * 1.3f, 1.0f, 0.0f, 0.0f); // Rotate On The
 																// X-Axis By
 																// angle
@@ -183,7 +185,7 @@ public class Lesson35 {
 				glu.gluSphere(quadratic, 1.3f, 20, 20); // Draw A Sphere
 				break; // Done Drawing Sphere
 
-			case 2: // Effect 2 - Cylinder
+			case 3: // Effect 2 - Cylinder
 				gl.glRotatef(angle * 1.3f, 1.0f, 0.0f, 0.0f); // Rotate On The
 																// X-Axis By
 																// angle
@@ -265,6 +267,15 @@ public class Lesson35 {
 
 			ui_image_copy = new Byte[TEX_WIDTH * TEX_HEIGHT * 3 * Byte.SIZE];
 
+			byte[] r = new byte[TEX_WIDTH * TEX_HEIGHT * 3 * Byte.SIZE];
+			new Random().nextBytes(r);
+			for (int i = 0; i < r.length; i++) {
+				ui_image_copy[i] = r[i];
+				// System.out.println("ui_image_copy[i]=" + ui_image_copy[i]);
+			}
+			System.out.println("TEX_WIDTH=" + TEX_WIDTH + ",TEX_HEIGHT="
+					+ TEX_HEIGHT);
+
 			/*
 			 * create texture transform matrix (avi file must not be 2^n by 2^m
 			 * but a texture has to be)
@@ -286,6 +297,7 @@ public class Lesson35 {
 		// let's set some things
 		private void initialize(GLAutoDrawable gLDrawable) {
 			final GL gl = gLDrawable.getGL();
+			glu = new GLU(); // get GL Utilities
 
 			quadratic = glu.gluNewQuadric(); // Create A Pointer To The Quadric
 												// Object
@@ -314,12 +326,14 @@ public class Lesson35 {
 														// near, far
 			gl.glMatrixMode(GL.GL_MODELVIEW);
 
+			myTexture.enable();
+			myTexture.bind();
 			// gl.glGenTextures(1, &texture); // generate OpenGL texture object
 			gl.glEnable(GL.GL_TEXTURE_2D);
-			gl.glBindTexture(GL.GL_TEXTURE_2D, texture); // use previously
-															// created texture
-															// object and set
-															// options
+			// gl.glBindTexture(GL.GL_TEXTURE_2D, texture); // use previously
+			// created texture
+			// object and set
+			// options
 			gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER,
 					GL.GL_NEAREST);
 			gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER,
@@ -410,6 +424,8 @@ public class Lesson35 {
 			gl.glLoadMatrixd(db);
 
 			gl.glMatrixMode(GL.GL_MODELVIEW);
+
+			myTexture.disable();
 		}
 
 		/**
@@ -421,10 +437,28 @@ public class Lesson35 {
 		 *            The GLDrawable object.
 		 */
 		public void init(GLAutoDrawable gLDrawable) {
+			String resourceName = "nehe/lesson23/data/BG.bmp";
+			URL url = getResource(resourceName);
+			if (url == null) {
+				throw new RuntimeException("Error reading resources");
+			}
+			try {
+				BufferedImage bufferedImage = ImageIO.read(new File(url
+						.getFile()));
+				ImageUtil.flipImageVertically(bufferedImage);
+				myTexture = TextureIO.newTexture(bufferedImage, true);
+			} catch (GLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			this.gLDrawable = gLDrawable;
 			baseInit(gLDrawable);
 
 			final GL gl = gLDrawable.getGL();
-			glu = new GLU(); // get GL Utilities
 
 			quadratic = glu.gluNewQuadric(); // Create A Pointer To The Quadric
 												// Object
@@ -453,6 +487,8 @@ public class Lesson35 {
 														// near, far
 			gl.glMatrixMode(GL.GL_MODELVIEW);
 
+			myTexture.enable();
+			myTexture.bind();
 			// gl.glGenTextures(1, &texture); // generate OpenGL texture object
 			// gl.glEnable(GL_TEXTURE_2D);
 			// gl.glBindTexture( GL_TEXTURE_2D, texture ); // use previously
@@ -545,6 +581,8 @@ public class Lesson35 {
 			db.put(tex_mat);
 			gl.glLoadMatrixd(db);
 			gl.glMatrixMode(GL.GL_MODELVIEW);
+
+			myTexture.disable();
 		}
 
 		/**
@@ -596,13 +634,30 @@ public class Lesson35 {
 				animator.stop();
 				System.exit(0);
 				break;
-			case KeyEvent.VK_SPACE:
-				scene = !scene;
-				System.out.println("scene=" + scene);
+			case KeyEvent.VK_1:
+			case KeyEvent.VK_2:
+			case KeyEvent.VK_3:
+				effect = e.getKeyCode() - '0';
+				System.out.println("effect " + effect);
+				//display(gLDrawable);
 				break;
-			case KeyEvent.VK_M:
-				masking = !masking;
-				System.out.println("masking=" + masking);
+			case KeyEvent.VK_B:
+				bg = !bg;
+				if (bg) {
+					System.out.println("background on");
+				} else {
+					System.out.println("background off");
+				}
+				//display(gLDrawable);
+				break;
+			case KeyEvent.VK_E:
+				env = !env;
+				if (env) {
+					System.out.println("environment mapping on");
+				} else {
+					System.out.println("environment mapping off");
+				}
+				//display(gLDrawable);
 				break;
 			}
 		}

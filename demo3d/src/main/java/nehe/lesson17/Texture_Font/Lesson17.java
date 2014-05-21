@@ -267,7 +267,7 @@ public class Lesson17 extends Frame implements GLEventListener, KeyListener {
 		// messed up. Once i do i'll send an update to NeHe...for now it's
 		// BMP's...
 		String[] imgLoc = { "data/Font.bmp", "data/Bumps.bmp" };
-		loadGLTextures(gl, glu, imgLoc); // load the textures
+		//loadGLTextures(gl, glu, imgLoc); // load the textures
 
 		generateFont(gl);
 
