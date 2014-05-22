@@ -1,4 +1,4 @@
-package nehe.lesson35.xuggle;
+package com.trungnd10.media.xuggle;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;

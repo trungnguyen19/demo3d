@@ -1,4 +1,4 @@
-package nehe.lesson35.xuggle;
+package com.trungnd10.media.xuggle;
 
 import java.awt.AWTException;
 import java.awt.Rectangle;

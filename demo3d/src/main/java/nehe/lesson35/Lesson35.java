@@ -30,6 +30,8 @@ import com.sun.opengl.util.Animator;
 import com.sun.opengl.util.ImageUtil;
 import com.sun.opengl.util.texture.Texture;
 import com.sun.opengl.util.texture.TextureIO;
+import com.trungnd10.media.xuggle.MyVideoReader;
+import com.trungnd10.utils.MyConstants;
 
 //import net.java.games.jogl.*;
 //import net.java.games.jogl.util.*;
@@ -85,7 +87,7 @@ public class Lesson35 {
 		float angle = 0.0f;
 		boolean bg = true; // enable background ('b' key)
 		boolean env = true; // enable environment ('e' key)
-		int effect = 0; // switch between the effects
+		int effect = 1; // switch between the effects
 
 		int cube_list;
 		double tex_mat[];
@@ -94,6 +96,11 @@ public class Lesson35 {
 
 		private GLAutoDrawable gLDrawable;
 
+		Texture[] myTextures = new Texture[3];
+		int orderImage = 0, currentImage = 0;
+		
+		MyVideoReader vr;
+		
 		/**
 		 * Called by the drawable to initiate OpenGL rendering by the client.
 		 * After all GLEventListeners have been notified of a display event, the
@@ -111,6 +118,12 @@ public class Lesson35 {
 																			// Depth
 																			// Buffer
 
+//			if (currentImage != orderImage) {
+				timer_func(gLDrawable);
+//				currentImage = orderImage;
+//			}
+
+			
 			// GL_TEXTURE_2D was enabled in init function !
 			angle += 20.0f / 60.0f; // does some rotation
 
@@ -170,6 +183,8 @@ public class Lesson35 {
 																// Z-Axis By
 																// angle
 				gl.glCallList(cube_list); // Draw cube via display list
+
+				glu.gluCylinder(quadratic, 1.0f, 1.0f, 3.0f, 32, 32); // Draw A
 				break; // Done Effect 0
 
 			case 2: // Effect 1 - Sphere
@@ -210,6 +225,7 @@ public class Lesson35 {
 													// Generation
 													// For T (NEW)
 			}
+			
 		}
 
 		void timer_func(GLAutoDrawable gLDrawable) {
@@ -242,8 +258,14 @@ public class Lesson35 {
 
 		      //glBindTexture( GL_TEXTURE_2D, texture );  // is done in initilaize() !
 		      // look at the GL_BGR (flips BGR video to RGB texture)
-		      gl.glTexImage2D ( GL.GL_TEXTURE_2D, 0, GL.GL_RGB, TEX_WIDTH, TEX_HEIGHT, 0,
-		    		  GL.GL_BGR, GL.GL_UNSIGNED_BYTE, ui_image_copy);
+//		      gl.glTexImage2D ( GL.GL_TEXTURE_2D, 0, GL.GL_RGB, TEX_WIDTH, TEX_HEIGHT, 0,
+//		    		  GL.GL_BGR, GL.GL_UNSIGNED_BYTE, ui_image_copy);
+		      BufferedImage bufferedImage = vr.getNextFrame();
+		      ImageUtil.flipImageVertically(bufferedImage);
+				myTexture = TextureIO.newTexture(bufferedImage, true);//myTextures[orderImage];
+//				System.out.println("other: "+orderImage);
+				myTexture.enable();
+				myTexture.bind();
 
 //		      image->Release();
 //		    } else {
@@ -331,145 +353,11 @@ public class Lesson35 {
 			tex_mat[5] = tex_param_t;
 			tex_mat[10] = tex_mat[15] = 1.0;
 
-			initialize(gLDrawable); // init gluQuadrics, glTexture, ... (needs
-									// also tex_param_s and tex_param_t)
+//			initialize(gLDrawable); // init gluQuadrics, glTexture, ... (needs
+//									// also tex_param_s and tex_param_t)
 
 			// this will call our timer_func in 1 second (only once)
 			// glu.glutTimerFunc(1000, timer_func, 0);
-		}
-
-		// let's set some things
-		private void initialize(GLAutoDrawable gLDrawable) {
-			final GL gl = gLDrawable.getGL();
-			glu = new GLU(); // get GL Utilities
-
-			quadratic = glu.gluNewQuadric(); // Create A Pointer To The Quadric
-												// Object
-			glu.gluQuadricNormals(quadratic, GLU.GLU_SMOOTH); // Create Smooth
-																// Normals
-			glu.gluQuadricTexture(quadratic, true); // Create Texture Coords
-
-			gl.glClearColor(0.0f, 0.0f, 0.0f, 0.5f); // Black Background
-			gl.glClearDepth(1.0f); // Depth Buffer Setup
-			gl.glDepthFunc(GL.GL_LEQUAL); // The Type Of Depth Testing (Less Or
-											// Equal)
-			gl.glEnable(GL.GL_DEPTH_TEST); // Enable Depth Testing
-			gl.glShadeModel(GL.GL_SMOOTH); // Select Smooth Shading
-			gl.glHint(GL.GL_PERSPECTIVE_CORRECTION_HINT, GL.GL_NICEST);
-
-			gl.glClearColor(0.0f, 0.0f, 0.0f, 0.5f); // Black Background
-			gl.glClearDepth(1.0f); // Depth Buffer Setup
-			gl.glDepthFunc(GL.GL_LEQUAL); // The Type Of Depth Testing (Less Or
-											// Equal)
-			gl.glEnable(GL.GL_DEPTH_TEST); // Enable Depth Testing
-			gl.glShadeModel(GL.GL_SMOOTH); // Select Smooth Shading
-			gl.glHint(GL.GL_PERSPECTIVE_CORRECTION_HINT, GL.GL_NICEST);
-
-			gl.glMatrixMode(GL.GL_PROJECTION);
-			glu.gluPerspective(60.0, 1.0, 0.2, 40.0); // field of fiew, aspect,
-														// near, far
-			gl.glMatrixMode(GL.GL_MODELVIEW);
-
-			myTexture.enable();
-			myTexture.bind();
-			// gl.glGenTextures(1, &texture); // generate OpenGL texture object
-			gl.glEnable(GL.GL_TEXTURE_2D);
-			// gl.glBindTexture(GL.GL_TEXTURE_2D, texture); // use previously
-			// created texture
-			// object and set
-			// options
-			gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER,
-					GL.GL_NEAREST);
-			gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER,
-					GL.GL_NEAREST);
-			gl.glTexGeni(GL.GL_S, GL.GL_TEXTURE_GEN_MODE, GL.GL_SPHERE_MAP); // how
-																				// to
-																				// set
-																				// texture
-																				// coords
-			gl.glTexGeni(GL.GL_T, GL.GL_TEXTURE_GEN_MODE, GL.GL_SPHERE_MAP);
-
-			// display lists are much faster than drawing directly
-			cube_list = gl.glGenLists(1); // generate display list
-			gl.glNewList(cube_list, GL.GL_COMPILE_AND_EXECUTE); // fill display
-																// list
-			gl.glBegin(GL.GL_QUADS); // Begin Drawing A Cube
-			// Front Face
-			gl.glNormal3f(0.0f, 0.0f, 0.5f);
-			gl.glTexCoord2f(0.0f, 0.0f);
-			gl.glVertex3f(-1.0f, -1.0f, 1.0f);
-			gl.glTexCoord2f(1.0f, 0.0f);
-			gl.glVertex3f(1.0f, -1.0f, 1.0f);
-			gl.glTexCoord2f(1.0f, 1.0f);
-			gl.glVertex3f(1.0f, 1.0f, 1.0f);
-			gl.glTexCoord2f(0.0f, 1.0f);
-			gl.glVertex3f(-1.0f, 1.0f, 1.0f);
-			// Back Face 0
-			gl.glNormal3f(0.0f, 0.0f, -0.5f);
-			gl.glTexCoord2f(1.0f, 0.0f);
-			gl.glVertex3f(-1.0f, -1.0f, -1.0f);
-			gl.glTexCoord2f(1.0f, 1.0f);
-			gl.glVertex3f(-1.0f, 1.0f, -1.0f);
-			gl.glTexCoord2f(0.0f, 1.0f);
-			gl.glVertex3f(1.0f, 1.0f, -1.0f);
-			gl.glTexCoord2f(0.0f, 0.0f);
-			gl.glVertex3f(1.0f, -1.0f, -1.0f);
-			// Top Face
-			gl.glNormal3f(0.0f, 0.5f, 0.0f);
-			gl.glTexCoord2f(0.0f, 1.0f);
-			gl.glVertex3f(-1.0f, 1.0f, -1.0f);
-			gl.glTexCoord2f(0.0f, 0.0f);
-			gl.glVertex3f(-1.0f, 1.0f, 1.0f);
-			gl.glTexCoord2f(1.0f, 0.0f);
-			gl.glVertex3f(1.0f, 1.0f, 1.0f);
-			gl.glTexCoord2f(1.0f, 1.0f);
-			gl.glVertex3f(1.0f, 1.0f, -1.0f);
-			// Bottom Face
-			gl.glNormal3f(0.0f, -0.5f, 0.0f);
-			gl.glTexCoord2f(1.0f, 1.0f);
-			gl.glVertex3f(-1.0f, -1.0f, -1.0f);
-			gl.glTexCoord2f(0.0f, 1.0f);
-			gl.glVertex3f(1.0f, -1.0f, -1.0f);
-			gl.glTexCoord2f(0.0f, 0.0f);
-			gl.glVertex3f(1.0f, -1.0f, 1.0f);
-			gl.glTexCoord2f(1.0f, 0.0f);
-			gl.glVertex3f(-1.0f, -1.0f, 1.0f);
-			// Right Face
-			gl.glNormal3f(0.5f, 0.0f, 0.0f);
-			gl.glTexCoord2f(1.0f, 0.0f);
-			gl.glVertex3f(1.0f, -1.0f, -1.0f);
-			gl.glTexCoord2f(1.0f, 1.0f);
-			gl.glVertex3f(1.0f, 1.0f, -1.0f);
-			gl.glTexCoord2f(0.0f, 1.0f);
-			gl.glVertex3f(1.0f, 1.0f, 1.0f);
-			gl.glTexCoord2f(0.0f, 0.0f);
-			gl.glVertex3f(1.0f, -1.0f, 1.0f);
-			// Left Face
-			gl.glNormal3f(-0.5f, 0.0f, 0.0f);
-			gl.glTexCoord2f(0.0f, 0.0f);
-			gl.glVertex3f(-1.0f, -1.0f, -1.0f);
-			gl.glTexCoord2f(1.0f, 0.0f);
-			gl.glVertex3f(-1.0f, -1.0f, 1.0f);
-			gl.glTexCoord2f(1.0f, 1.0f);
-			gl.glVertex3f(-1.0f, 1.0f, 1.0f);
-			gl.glTexCoord2f(0.0f, 1.0f);
-			gl.glVertex3f(-1.0f, 1.0f, -1.0f);
-			gl.glEnd(); // Done Drawing Our Cube
-			gl.glEndList();
-
-			// set texture transform matrix to alter (here only to scale)
-			// texture coordinates
-			// (our video stream must not be 2^n by 2^m but our texture has to
-			// be)
-			gl.glMatrixMode(GL.GL_TEXTURE);
-
-			DoubleBuffer db = DoubleBuffer.allocate(16);
-			db.put(tex_mat);
-			gl.glLoadMatrixd(db);
-
-			gl.glMatrixMode(GL.GL_MODELVIEW);
-
-			myTexture.disable();
 		}
 
 		/**
@@ -481,16 +369,35 @@ public class Lesson35 {
 		 *            The GLDrawable object.
 		 */
 		public void init(GLAutoDrawable gLDrawable) {
-			String resourceName = "nehe/lesson23/data/BG.bmp";
-			URL url = getResource(resourceName);
-			if (url == null) {
+			vr = new MyVideoReader();
+			vr.init(MyConstants.dataPath + "videos/avi/video1.avi");
+			
+			String resourceName1 = "nehe/lesson23/data/BG.bmp";
+			String resourceName2 = "nehe/lesson6/data/NeHe.png";
+			String resourceName3 = "nehe/lesson27/data/icon.png";
+			URL url1 = getResource(resourceName1);
+			URL url2 = getResource(resourceName2);
+			URL url3 = getResource(resourceName3);
+			if (url1 == null || url2 == null || url3 == null) {
 				throw new RuntimeException("Error reading resources");
 			}
 			try {
-				BufferedImage bufferedImage = ImageIO.read(new File(url
+				BufferedImage bufferedImage = ImageIO.read(new File(url1
 						.getFile()));
 				ImageUtil.flipImageVertically(bufferedImage);
-				myTexture = TextureIO.newTexture(bufferedImage, true);
+				myTextures[0] = TextureIO.newTexture(bufferedImage, true);
+
+				bufferedImage = ImageIO.read(new File(url2
+						.getFile()));
+				ImageUtil.flipImageVertically(bufferedImage);
+				myTextures[1] = TextureIO.newTexture(bufferedImage, true);
+			
+				bufferedImage = ImageIO.read(new File(url3
+						.getFile()));
+				ImageUtil.flipImageVertically(bufferedImage);
+				myTextures[2] = TextureIO.newTexture(bufferedImage, true);
+				
+				myTexture = myTextures[0];
 			} catch (GLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -503,6 +410,7 @@ public class Lesson35 {
 			baseInit(gLDrawable);
 
 			final GL gl = gLDrawable.getGL();
+			glu = new GLU();
 
 			quadratic = glu.gluNewQuadric(); // Create A Pointer To The Quadric
 												// Object
@@ -510,6 +418,7 @@ public class Lesson35 {
 																// Normals
 			glu.gluQuadricTexture(quadratic, true); // Create Texture Coords
 
+			
 			gl.glClearColor(0.0f, 0.0f, 0.0f, 0.5f); // Black Background
 			gl.glClearDepth(1.0f); // Depth Buffer Setup
 			gl.glDepthFunc(GL.GL_LEQUAL); // The Type Of Depth Testing (Less Or
@@ -547,7 +456,9 @@ public class Lesson35 {
 																				// texture
 																				// coords
 			gl.glTexGeni(GL.GL_T, GL.GL_TEXTURE_GEN_MODE, GL.GL_SPHERE_MAP);
-
+			
+			if (true) return;
+			
 			// display lists are much faster than drawing directly
 			cube_list = gl.glGenLists(1); // generate display list
 			gl.glNewList(cube_list, GL.GL_COMPILE_AND_EXECUTE); // fill display
@@ -626,7 +537,7 @@ public class Lesson35 {
 			gl.glLoadMatrixd(db);
 			gl.glMatrixMode(GL.GL_MODELVIEW);
 
-			myTexture.disable();
+			//myTexture.disable();
 		}
 
 		/**
@@ -679,8 +590,11 @@ public class Lesson35 {
 				System.exit(0);
 				break;
 			case KeyEvent.VK_T:
-				timer_func(gLDrawable);
-				System.out.println("test");
+				orderImage++;
+				if (orderImage == myTextures.length) {
+					orderImage = 0;
+				}
+				System.out.println("test:"+orderImage);
 				break;
 			case KeyEvent.VK_1:
 			case KeyEvent.VK_2:
