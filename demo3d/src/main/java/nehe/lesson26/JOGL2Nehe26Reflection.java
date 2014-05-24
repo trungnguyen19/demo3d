@@ -1,3 +1,4 @@
+package nehe.lesson26;
 import static java.awt.event.KeyEvent.VK_A;
 import static java.awt.event.KeyEvent.VK_DOWN;
 import static java.awt.event.KeyEvent.VK_LEFT;
@@ -120,8 +121,8 @@ public class JOGL2Nehe26Reflection implements GLEventListener, KeyListener {
 
 	// 3 textures
 	private Texture[] textures = new Texture[3];
-	private String[] textureFileNames = { "images/envwall.jpg",
-			"images/ball.jpg", "images/envroll.jpg" };
+	private String[] textureFileNames = { "data/envwall.jpg",
+			"data/ball.jpg", "data/envroll.jpg" };
 	private String textureFileType = ".jpg";
 
 	// Texture image flips vertically. Shall use TextureCoords class to retrieve

@@ -1,3 +1,4 @@
+package nehe.lesson09;
 import static java.awt.event.KeyEvent.VK_DOWN;
 import static java.awt.event.KeyEvent.VK_PAGE_DOWN;
 import static java.awt.event.KeyEvent.VK_PAGE_UP;
@@ -97,7 +98,7 @@ public class JOGL2Nehe09Stars implements GLEventListener, KeyListener {
 
 	// Texture applied over the shape
 	private Texture texture; // texture object
-	private String textureFileName = "images/star.bmp";
+	private String textureFileName = "data/star.bmp";
 	private String textureFileType = ".bmp";
 
 	// Texture image flips vertically. Shall use TextureCoords class to retrieve

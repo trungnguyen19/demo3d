@@ -1,3 +1,4 @@
+package nehe.lesson12;
 import static java.awt.event.KeyEvent.VK_DOWN;
 import static java.awt.event.KeyEvent.VK_LEFT;
 import static java.awt.event.KeyEvent.VK_RIGHT;
@@ -103,7 +104,7 @@ public class JOGL2Nehe12DisplayList implements GLEventListener, KeyListener {
 	private static float rotateSpeedY = 1.5f; // rotational speed for y-axis
 
 	private Texture texture; // texture over the shape
-	private String textureFileName = "images/cube.bmp";
+	private String textureFileName = "data/cube.bmp";
 	private String textureFileType = ".bmp";
 
 	// Texture image flips vertically. Shall use TextureCoords class to retrieve

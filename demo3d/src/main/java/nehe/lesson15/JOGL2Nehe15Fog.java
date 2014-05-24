@@ -1,3 +1,4 @@
+package nehe.lesson15;
 import static java.awt.event.KeyEvent.VK_DOWN;
 import static java.awt.event.KeyEvent.VK_F;
 import static java.awt.event.KeyEvent.VK_G;
@@ -136,7 +137,7 @@ public class JOGL2Nehe15Fog implements GLEventListener, KeyListener {
 	// Textures with three different filters - Nearest, Linear & MIPMAP
 	private Texture[] textures = new Texture[3];
 	private static int currTextureFilter = 0; // currently used filter
-	private String textureFileName = "images/crate.png";
+	private String textureFileName = "data/crate.png";
 	private String textureFileType = ".png";
 
 	int[] fogModes = { GL_EXP, GL_EXP2, GL_LINEAR }; // storage for 3 types of

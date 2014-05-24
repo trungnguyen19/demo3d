@@ -1,3 +1,4 @@
+package nehe.lesson18;
 import static java.awt.event.KeyEvent.VK_DOWN;
 import static java.awt.event.KeyEvent.VK_F;
 import static java.awt.event.KeyEvent.VK_L;
@@ -127,7 +128,7 @@ public class JOGL2Nehe18Quadrics implements GLEventListener, KeyListener {
 	// Textures with three different filters - Nearest, Linear & MIPMAP
 	private Texture[] textures = new Texture[3];
 	private static int currTextureFilter = 0; // currently used filter
-	private String textureFileName = "images/wall.bmp";
+	private String textureFileName = "data/wall.bmp";
 	private String textureFileType = ".bmp";
 
 	// Texture image flips vertically. Shall use TextureCoords class to retrieve

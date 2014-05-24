@@ -1,10 +1,8 @@
+package nehe.lesson13;
 import static javax.media.opengl.GL.GL_COLOR_BUFFER_BIT;
-import static javax.media.opengl.GL.GL_COLOR_MATERIAL;
 import static javax.media.opengl.GL.GL_DEPTH_BUFFER_BIT;
 import static javax.media.opengl.GL.GL_DEPTH_TEST;
 import static javax.media.opengl.GL.GL_LEQUAL;
-import static javax.media.opengl.GL.GL_LIGHT0;
-import static javax.media.opengl.GL.GL_LIGHTING;
 import static javax.media.opengl.GL.GL_MODELVIEW;
 import static javax.media.opengl.GL.GL_NICEST;
 import static javax.media.opengl.GL.GL_PERSPECTIVE_CORRECTION_HINT;
@@ -15,6 +13,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.geom.Rectangle2D;
 import java.text.DecimalFormat;
 
 import javax.media.opengl.GL;
@@ -29,6 +28,7 @@ import com.sun.opengl.util.j2d.TextRenderer;
 
 //import java.awt.*;
 //import java.awt.event.*;
+//import java.awt.geom.Rectangle2D;
 //import java.text.DecimalFormat;
 //import javax.swing.*;
 //import javax.media.opengl.GL2;
@@ -40,15 +40,12 @@ import com.sun.opengl.util.j2d.TextRenderer;
 //import com.jogamp.opengl.util.awt.TextRenderer;
 //import static javax.media.opengl.GL.*; // GL constants
 //import static javax.media.opengl.GL2.*; // GL2 constants
-//import static javax.media.opengl.fixedfunc.GLLightingFunc.GL_COLOR_MATERIAL;
-//import static javax.media.opengl.fixedfunc.GLLightingFunc.GL_LIGHT0;
-//import static javax.media.opengl.fixedfunc.GLLightingFunc.GL_LIGHTING;
 
 /**
- * NeHe Lesson #14: 3D Text Rendering using TextRenderer
+ * NeHe Lesson #13: 2D Text Rendering using TextRenderer class
  */
-public class JOGL2Nehe14Text3D implements GLEventListener { // Renderer
-	private static String TITLE = "Nehe #14: Outline Fonts"; // window's title
+public class JOGL2Nehe13Text2D implements GLEventListener { // Renderer
+	private static String TITLE = "Nehe #13: Bitmap Fonts"; // window's title
 	private static final int CANVAS_WIDTH = 640; // width of the drawable
 	private static final int CANVAS_HEIGHT = 480; // height of the drawable
 	private static final int FPS = 60; // animator's target frames per second
@@ -56,21 +53,20 @@ public class JOGL2Nehe14Text3D implements GLEventListener { // Renderer
 	private GLU glu; // for the GL Utility
 
 	private TextRenderer textRenderer;
-	private String msg = "NeHe - ";
+	private String msg = "Active OpenGL Text With NeHe - ";
 	private DecimalFormat formatter = new DecimalFormat("###0.00");
+	private int textPosX; // x-position of the text
+	private int textPosY; // y-position of the text
 
-	// private float textPosX; // x-position of the 3D text
-	// private float textPosY; // y-position of the 3D text
-	// private float textScaling; // scaling factor for 3D text
-
-	private static float rotateAngle = 0.0f;
+	private float counter1 = 0; // 1st Counter Used To Move Text & For Coloring
+	private float counter2 = 0; // 2nd Counter Used To Move Text & For Coloring
 
 	/** The entry main() method */
 	public static void main(String[] args) {
 		// Create the OpenGL rendering canvas
 		GLCanvas canvas = new GLCanvas(); // heavy-weight GLCanvas
 		canvas.setPreferredSize(new Dimension(CANVAS_WIDTH, CANVAS_HEIGHT));
-		canvas.addGLEventListener(new JOGL2Nehe14Text3D());
+		canvas.addGLEventListener(new JOGL2Nehe13Text2D());
 
 		// Create a animator that drives canvas' display() at the specified FPS.
 		final FPSAnimator animator = new FPSAnimator(canvas, FPS, true);
@@ -117,20 +113,19 @@ public class JOGL2Nehe14Text3D implements GLEventListener { // Renderer
 		gl.glShadeModel(GL_SMOOTH); // blends colors nicely, and smoothes out
 									// lighting
 
-		gl.glEnable(GL_LIGHT0); // Enable default light (quick and dirty)
-		gl.glEnable(GL_LIGHTING); // Enable lighting
-		gl.glEnable(GL_COLOR_MATERIAL); // Enable coloring of material
-
 		// Allocate textRenderer with the chosen font
-		textRenderer = new TextRenderer(new Font("SansSerif", Font.BOLD, 12));
+		textRenderer = new TextRenderer(new Font("SansSerif", Font.BOLD, 14));
 
-		// Calculate the position and scaling factor
-		// Rectangle2D bounds = textRenderer.getBounds(msg + "00.00");
-		// int textWidth = (int)bounds.getWidth();
-		// int textHeight = (int)bounds.getHeight();
+		Rectangle2D bounds = textRenderer.getBounds(msg + "0000.00");
+		int textWidth = (int) bounds.getWidth();
+		int textHeight = (int) bounds.getHeight();
 		// System.out.println("w = " + textWidth);
 		// System.out.println("h = " + textHeight);
-		// 104 x 14
+		// 528 x 26
+
+		// Centralize text on the canvas
+		textPosX = (drawable.getWidth() - textWidth) / 2;
+		textPosY = (drawable.getHeight() - textHeight) / 2 + textHeight;
 	}
 
 	/**
@@ -169,29 +164,30 @@ public class JOGL2Nehe14Text3D implements GLEventListener { // Renderer
 																// buffers
 		gl.glLoadIdentity(); // reset the model-view matrix
 
-		// ----- Rendering 3D text using TextRenderer class -----
-		textRenderer.begin3DRendering();
+		// ----- Rendering 2D text using TextRenderer class -----
 
-		gl.glTranslatef(0.0f, 0.0f, -50.0f);
-		gl.glRotatef(rotateAngle, 1.0f, 0.0f, 0.0f);
-		gl.glRotatef(rotateAngle * 1.5f, 0.0f, 1.0f, 0.0f);
-		gl.glRotatef(rotateAngle * 1.4f, 0.0f, 0.0f, 1.0f);
+		// Prepare to draw text
+		textRenderer.beginRendering(drawable.getWidth(), drawable.getHeight());
 
-		// Pulsing Colors Based On Text Position
-		textRenderer.setColor((float) (Math.cos(rotateAngle / 20.0f)), // R
-				(float) (Math.sin(rotateAngle / 25.0f)), // G
-				1.0f - 0.5f * (float) (Math.cos(rotateAngle / 17.0f)), 0.5f); // B
+		// Pulsing colors based on text position, set color in RGBA
+		textRenderer.setColor((float) (Math.cos(counter1)), // R
+				(float) (Math.sin(counter2)), // G
+				1.0f - 0.5f * (float) (Math.cos(counter1 + counter2)), // B
+				0.5f); // Alpha
 
-		// String, x, y, z, and scaling - need to scale down
-		// Not too sure how to compute the x, y and scaling - trial and error!
-		textRenderer.draw3D(msg + formatter.format(rotateAngle / 50), -20.0f,
-				0.0f, 0.0f, 0.4f);
+		// 2D text using int (x, y) coordinates in OpenGL coordinates system,
+		// i.e., (0,0) at the bottom-left corner, instead of Java Graphics
+		// coordinates.
+		// x is set to between (+/-)10. y is set to be (+/-)80.
+		textRenderer.draw(msg + formatter.format(counter1), // string
+				(int) ((textPosX + 10 * Math.cos(counter1))), // x
+				(int) (textPosY + 80 * Math.sin(counter2))); // y
 
-		// Clean up rendering
-		textRenderer.end3DRendering();
+		textRenderer.endRendering(); // finish rendering
 
-		// Update the rotate angle
-		rotateAngle += 0.1f;
+		// Update the counters to move the text around the screen
+		counter1 += 0.102f; // increase The First Counter
+		counter2 += 0.010f; // increase The Second Counter
 	}
 
 	/**

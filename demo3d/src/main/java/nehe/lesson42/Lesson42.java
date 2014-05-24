@@ -88,7 +88,7 @@ public class Lesson42 {
 
 		void updateTex(int dmx, int dmy) /* Update Pixel dmx, dmy On The Texture */
 		{
-			 System.out.println("dmx=" + dmx + ",dmy=" + dmy);
+			System.out.println("dmx=" + dmx + ",dmy=" + dmy);
 			tex_data.put(0 + ((dmx + (width * dmy)) * 3), (byte) 255); /*
 																		 * Set
 																		 * Red
@@ -120,8 +120,8 @@ public class Lesson42 {
 			int dir; /* Will Hold Current Direction */
 			int x, y;
 
-//			System.out.println("milliseconds = "+milliseconds);
-			
+			// System.out.println("milliseconds = "+milliseconds);
+
 			xrot += (float) (milliseconds) * 0.02f; /*
 													 * Increase Rotation On The
 													 * X-Axis
@@ -135,8 +135,8 @@ public class Lesson42 {
 													 * Z-Axis
 													 */
 
-//			System.out.println("xrot="+xrot+",yrot="+yrot+",zrot="+zrot);
-			
+			// System.out.println("xrot="+xrot+",yrot="+yrot+",zrot="+zrot);
+
 			done = true; /* Set done To True */
 			for (x = 0; x < width; x += 2) /* Loop Through All The Rooms */
 			{
@@ -176,23 +176,30 @@ public class Lesson42 {
 				reset();
 			}
 
-				int A = (((((mx + 2) + (width * my)) * 3)) );
-				int B = (((((mx - 2) + (width * my)) * 3)) );
-				int C = ((((mx + (width * (my + 2))) * 3)) );
-				int D = (((mx + (width * (my - 2))) * 3) );
-				int max = -1;
-				if (A > max || B > max || C > max || D > max) {
-					System.out.println("");
-					System.out.println(":"+(width * height * 3));
-					System.out.println("mx = "+mx);
-					System.out.println("width = "+width);
-					System.out.println("my = "+my);
-					System.out.println("tex_data.capacity="+tex_data.capacity());
-					System.out.println("A:"+A );
-					System.out.println("B:"+B);
-					System.out.println("C:"+C);
-					System.out.println("D:"+D);
-				}
+			int A = (((((mx + 2) + (width * my)) * 3)));
+			int B = (((((mx - 2) + (width * my)) * 3)));
+			int C = ((((mx + (width * (my + 2))) * 3)));
+			int D = (((mx + (width * (my - 2))) * 3));
+			int max = -1;
+			if (A > max || B > max || C > max || D > max) {
+				System.out.println("");
+				System.out.println(":" + (width * height * 3));
+				System.out.println("mx = " + mx);
+				System.out.println("width = " + width);
+				System.out.println("my = " + my);
+				System.out.println("tex_data.capacity=" + tex_data.capacity());
+				System.out.println("A:" + A);
+				System.out.println("B:" + B);
+				System.out.println("C:" + C);
+				System.out.println("D:" + D);
+			}
+
+			// trungnd10
+			if (mx <= 2)
+				mx = 2;
+			if (my <= 2)
+				my = 2;
+
 			/* Check To Make Sure We Are Not Trapped (Nowhere Else To Move) */
 			if ((((tex_data.get((((mx + 2) + (width * my)) * 3)) & 0xff) == 255) || mx > (width - 4))
 					&& (((tex_data.get((((mx - 2) + (width * my)) * 3)) & 0xff) == 255) || mx < 2)
@@ -200,12 +207,14 @@ public class Lesson42 {
 					&& (((tex_data.get(((mx + (width * (my - 2))) * 3)) & 0xff) == 255) || my < 2)) {
 				do /* If We Are Trapped */
 				{
-					mx = random.nextInt(width); /*
-												 * Pick A New Random X Position
-												 */
-					my = random.nextInt(height); /*
-												 * Pick A New Random Y Position
-												 */
+					mx = random.nextInt(width / 2 - 1) * 2; /*
+															 * Pick A New Random
+															 * X Position
+															 */
+					my = random.nextInt(height / 2 - 1) * 2; /*
+															 * Pick A New Random
+															 * Y Position
+															 */
 				} while (tex_data.get(((mx + (width * my)) * 3)) == 0); /*
 																		 * Keep
 																		 * Picking
@@ -345,14 +354,15 @@ public class Lesson42 {
 			int loop;
 
 			tickCount = getCurrentTimeByMillisecond();
-//			System.out.println("\ntickCount = "+tickCount);
-//			System.out.println("lastTickCount = "+lastTickCount);
-//			System.out.println("tickCount - lastTickCount = "+(tickCount - lastTickCount));
-			update((float)tickCount - lastTickCount);
+			// System.out.println("\ntickCount = "+tickCount);
+			// System.out.println("lastTickCount = "+lastTickCount);
+			// System.out.println("tickCount - lastTickCount = "+(tickCount -
+			// lastTickCount));
+			update((float) tickCount - lastTickCount);
 			lastTickCount = tickCount;
 
-//			System.out.println("xrot="+xrot+",yrot="+yrot+",zrot="+zrot);
-			
+			// System.out.println("xrot="+xrot+",yrot="+yrot+",zrot="+zrot);
+
 			/*
 			 * Update Our Texture... This Is The Key To The Programs Speed...
 			 * Much Faster Than Rebuilding The Texture Each Time
@@ -580,7 +590,7 @@ public class Lesson42 {
 			}
 
 			gl.glFlush(); /* Flush The GL Rendering Pipeline */
-//			System.out.println("Xrot="+xrot+",yrot="+yrot+",zrot="+zrot);
+			// System.out.println("Xrot="+xrot+",yrot="+yrot+",zrot="+zrot);
 		}
 
 		Random random = new Random();
@@ -633,18 +643,19 @@ public class Lesson42 {
 			}
 
 			// Pick A New Random X Position
-			mx = random.nextInt(width);
+			mx = random.nextInt(width / 2 - 1) * 2;
 			// Pick A New Random Y Position
-			my = random.nextInt(height);
+			my = random.nextInt(height / 2 - 1) * 2;
 
 			System.out.println("mx=" + mx + ",my=" + my);
 		}
 
 		long startTime;
 		Date date;
+
 		int getCurrentTimeByMillisecond() {
 			long lDateTime = new Date().getTime();
-			return (int)(lDateTime - startTime);
+			return (int) (lDateTime - startTime);
 		}
 
 		/**
@@ -661,8 +672,8 @@ public class Lesson42 {
 
 			date = new Date();
 			startTime = date.getTime();
-			System.out.println("startTime: "+startTime);
-			
+			System.out.println("startTime: " + startTime);
+
 			// String resourceName1 = "nehe/lesson20/data/logo.bmp";
 			// URL url1 = getResource(resourceName1);
 			// if (url1 == null) {
@@ -681,7 +692,7 @@ public class Lesson42 {
 			window_width = gLDrawable.getWidth();
 			window_height = gLDrawable.getHeight();
 
-			tex_data = ByteBuffer.allocateDirect(width * height * 3); /*
+			tex_data = ByteBuffer.allocateDirect(width * height * 4); /*
 																	 * Allocate
 																	 * Space For
 																	 * Our

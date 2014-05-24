@@ -373,7 +373,7 @@ public class Lesson35 {
 			vr.init(MyConstants.dataPath + "videos/avi/video1.avi");
 			
 			String resourceName1 = "nehe/lesson23/data/BG.bmp";
-			String resourceName2 = "nehe/lesson6/data/NeHe.png";
+			String resourceName2 = "nehe/lesson06/data/NeHe.png";
 			String resourceName3 = "nehe/lesson27/data/icon.png";
 			URL url1 = getResource(resourceName1);
 			URL url2 = getResource(resourceName2);

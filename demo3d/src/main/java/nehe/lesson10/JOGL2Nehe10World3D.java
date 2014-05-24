@@ -1,3 +1,4 @@
+package nehe.lesson10;
 import static java.awt.event.KeyEvent.VK_B;
 import static java.awt.event.KeyEvent.VK_DOWN;
 import static java.awt.event.KeyEvent.VK_LEFT;
@@ -116,7 +117,7 @@ public class JOGL2Nehe10World3D implements GLEventListener, KeyListener {
 
 	private Texture[] textures = new Texture[3];
 	private int currTextureFilter = 0; // Which Filter To Use
-	private String textureFilename = "images/mud.png";
+	private String textureFilename = "data/mud.png";
 	private String textureFileType = ".png";
 
 	// Texture image flips vertically. Shall use TextureCoords class to retrieve
@@ -171,7 +172,7 @@ public class JOGL2Nehe10World3D implements GLEventListener, KeyListener {
 		BufferedReader in = null;
 		try {
 			in = new BufferedReader(new InputStreamReader(getClass()
-					.getResourceAsStream("models/world.txt")));
+					.getResourceAsStream("data/world.txt")));//models/world.txt")));
 			String line = null;
 			while ((line = in.readLine()) != null) {
 				if (line.trim().length() == 0 || line.trim().startsWith("//"))

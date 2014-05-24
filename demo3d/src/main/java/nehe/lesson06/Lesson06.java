@@ -1,4 +1,4 @@
-package nehe.lesson6;
+package nehe.lesson06;
 
 /*
  * Lesson06.java
@@ -169,7 +169,7 @@ public class Lesson06 {
 			final GL gl = gLDrawable.getGL();
 			glu = new GLU(); // get GL Utilities
 
-			String resourceName = "nehe/lesson6/data/NeHe.png";
+			String resourceName = "nehe/lesson06/data/NeHe.png";
 			URL url = getResource(resourceName);
 			if (url == null) {
 				throw new RuntimeException("Error reading resource "
