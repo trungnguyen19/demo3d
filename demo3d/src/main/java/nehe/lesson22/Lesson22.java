@@ -30,7 +30,15 @@
 //import java.awt.event.KeyListener;
 //import java.awt.event.WindowAdapter;
 //import java.awt.event.WindowEvent;
+//import java.awt.image.BufferedImage;
+//import java.io.File;
+//import java.io.IOException;
+//import java.net.URL;
+//import java.nio.ByteBuffer;
+//import java.nio.FloatBuffer;
+//import java.nio.IntBuffer;
 //
+//import javax.imageio.ImageIO;
 //import javax.media.opengl.DebugGL;
 //import javax.media.opengl.GL;
 //import javax.media.opengl.GLAutoDrawable;
@@ -39,6 +47,7 @@
 //import javax.media.opengl.GLDrawable;
 //import javax.media.opengl.GLDrawableFactory;
 //import javax.media.opengl.GLEventListener;
+//import javax.media.opengl.GLException;
 //import javax.media.opengl.glu.GLU;
 //import javax.swing.ImageIcon;
 //import javax.swing.JFrame;
@@ -46,11 +55,15 @@
 //
 //import com.sun.opengl.util.Animator;
 //import com.sun.opengl.util.GLUT;
+//import com.sun.opengl.util.ImageUtil;
+//import com.sun.opengl.util.texture.Texture;
+//import com.sun.opengl.util.texture.TextureIO;
+//import com.trungnd10.utils.General;
 //
 //public class Lesson22 implements KeyListener {
 //
 //	initRenderer renderer;
-//	GLDrawable glDrawable;
+//	GLAutoDrawable glDrawable;
 //	GLCanvas canvas;
 //	Animator loop;
 //	JFrame frame;
@@ -170,8 +183,7 @@
 //			frame.setIconImage(new ImageIcon("Data/icon.png").getImage());
 //		}
 //
-//		canvas = GLDrawableFactory.getFactory().createGLCanvas(
-//				new GLCapabilities());
+//		canvas = new GLCanvas();//GLDrawableFactory.getFactory().createGLCanvas(new GLCapabilities());
 //		canvas.setSize(new Dimension(canvasWidth, canvasHeight));
 //		canvas.addGLEventListener((renderer = new initRenderer()));
 //		canvas.requestFocus();
@@ -199,7 +211,7 @@
 //		public void init(GLAutoDrawable drawable) {
 //
 //			gl = drawable.getGL();
-//			glu = new GLU();//drawable.getGLU();
+//			glu = new GLU();// drawable.getGLU();
 //			glut = new GLUT();
 //			glDrawable = drawable;
 //			drawable.setGL(new DebugGL(drawable.getGL()));
@@ -223,7 +235,7 @@
 //			loop.start();
 //		}
 //
-//		public void display(GLDrawable drawable) {
+//		public void display(GLAutoDrawable drawable) {
 //			// Clear Color Buffer, Depth Buffer
 //			gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 //
@@ -242,7 +254,7 @@
 //			processKeyboard();
 //		}
 //
-//		public void reshape(GLDrawable drawable, int xstart, int ystart,
+//		public void reshape(GLAutoDrawable drawable, int xstart, int ystart,
 //				int width, int height) {
 //
 //			height = (height == 0) ? 1 : height;
@@ -256,7 +268,7 @@
 //			gl.glLoadIdentity();
 //		}
 //
-//		public void displayChanged(GLDrawable drawable, boolean modeChanged,
+//		public void displayChanged(GLAutoDrawable drawable, boolean modeChanged,
 //				boolean deviceChanged) {
 //		}
 //	}
@@ -274,7 +286,11 @@
 //				&& extensions.indexOf("GL_EXT_texture_env_combine") != -1) {// Is
 //																			// texture_env_combining
 //																			// Supported?
-//			gl.glGetIntegerv(GL.GL_MAX_TEXTURE_UNITS_ARB, maxTexelUnits);
+//			IntBuffer ib = IntBuffer.allocate(maxTexelUnits.length);
+//			// trungnd10
+//			//gl.glGetIntegerv(GL.GL_MAX_TEXTURE_UNITS_ARB, maxTexelUnits);
+//			gl.glGetIntegerv(GL.GL_MAX_TEXTURE_UNITS, ib);
+//			for (int i = 0;i < ib.capacity();i++) {maxTexelUnits[i] = ib.get(i);}
 //			return true;
 //		}
 //		useMultitexture = false; // We Can't Use It If It Isn't Supported!
@@ -283,26 +299,47 @@
 //
 //	void initLights() {
 //
-//		gl.glLightfv(GL.GL_LIGHT1, GL.GL_AMBIENT, LightAmbient); // Load
+//		FloatBuffer fb = FloatBuffer.allocate(LightAmbient.length);
+//		fb.put(LightAmbient);
+//		gl.glLightfv(GL.GL_LIGHT1, GL.GL_AMBIENT, fb); // Load
 //																	// Light-Parameters
 //																	// Into
 //																	// GL_LIGHT1
-//		gl.glLightfv(GL.GL_LIGHT1, GL.GL_DIFFUSE, LightDiffuse);
-//		gl.glLightfv(GL.GL_LIGHT1, GL.GL_POSITION, LightPosition);
+//		fb = FloatBuffer.allocate(LightDiffuse.length);
+//		fb.put(LightDiffuse);
+//		gl.glLightfv(GL.GL_LIGHT1, GL.GL_DIFFUSE, fb);
+//		fb = FloatBuffer.allocate(LightPosition.length);
+//		fb.put(LightPosition);
+//		gl.glLightfv(GL.GL_LIGHT1, GL.GL_POSITION, fb);
 //		gl.glEnable(GL.GL_LIGHT1);
 //	}
 //
 //	void LoadGLTextures() { // Load PNGs And Convert To Textures
 //
+////		Texture myTexture;
+////		String resourceName = "nehe/lesson22/data/Base.bmp";
+////		URL url = General.getResource(resourceName);
+////		if (url == null) {
+////			throw new RuntimeException("Error reading resources");
+////		}
+////		try {
+////			BufferedImage tBufferedImage = ImageIO.read(new File(url
+////					.getFile()));
+////			ImageUtil.flipImageVertically(tBufferedImage);
+////			myTexture = TextureIO.newTexture(tBufferedImage, true);
+////		} catch (GLException|IOException e) {
+////			e.printStackTrace();
+////		}
+//		
 //		LoadImage image = new LoadImage(); // Create Storage Space For The
 //											// Texture
 //		byte[] alpha = null;
 //
-//		image.generateTextureInfo("Data/Base.bmp", false); // Load The
+//		image.generateTextureInfo("src/main/java/nehe/lesson22/data/Base.bmp", false); // Load The
 //															// Tile-Bitmap For
 //															// Base-Texture
 //
-//		gl.glGenTextures(3, texture); // Create Three Textures
+//		gl.glGenTextures(3, texture, 0); // Create Three Textures
 //
 //		gl.glBindTexture(GL.GL_TEXTURE_2D, texture[0]); // Create Nearest
 //														// Filtered Texture
@@ -310,8 +347,12 @@
 //				GL.GL_NEAREST);
 //		gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER,
 //				GL.GL_NEAREST);
+//		
+//		ByteBuffer bb = ByteBuffer.allocate(image.data.length);
+//		bb.put(image.data);
+//		System.out.println("image.data.length = "+image.data.length);
 //		gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGB8, image.width,
-//				image.height, 0, GL.GL_RGB, GL.GL_UNSIGNED_BYTE, image.data);
+//				image.height, 0, GL.GL_RGB, GL.GL_UNSIGNED_BYTE, bb);
 //
 //		// ========
 //		// Use GL_RGB8 Instead Of "3" In glTexImage2D. Also Defined By GL:
@@ -325,8 +366,9 @@
 //				GL.GL_LINEAR);
 //		gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER,
 //				GL.GL_LINEAR);
+//		
 //		gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGB8, image.width,
-//				image.height, 0, GL.GL_RGB, GL.GL_UNSIGNED_BYTE, image.data);
+//				image.height, 0, GL.GL_RGB, GL.GL_UNSIGNED_BYTE, bb);
 //
 //		gl.glBindTexture(GL.GL_TEXTURE_2D, texture[2]); // Create MipMapped
 //														// Texture
@@ -335,11 +377,11 @@
 //		gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER,
 //				GL.GL_LINEAR_MIPMAP_NEAREST);
 //		glu.gluBuild2DMipmaps(GL.GL_TEXTURE_2D, GL.GL_RGB8, image.width,
-//				image.height, GL.GL_RGB, GL.GL_UNSIGNED_BYTE, image.data);
+//				image.height, GL.GL_RGB, GL.GL_UNSIGNED_BYTE, bb);
 //
 //		image.destroy();
 //
-//		image.generateTextureInfo("Data/Bump.bmp", false); // Load The Bumpmaps
+//		image.generateTextureInfo("src/main/java/nehe/lesson22/data/Bump.bmp", false); // Load The Bumpmaps
 //		gl.glPixelTransferf(GL.GL_RED_SCALE, 0.5f); // Scale RGB By 50%, So That
 //													// We Have Only
 //		gl.glPixelTransferf(GL.GL_GREEN_SCALE, 0.5f); // Half Intenstity
@@ -349,9 +391,11 @@
 //																					// Wrapping,
 //																					// Please!
 //		gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL.GL_CLAMP);
-//		gl.glTexParameterfv(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_BORDER_COLOR, Gray);
+//		FloatBuffer fb = FloatBuffer.allocate(Gray.length);
+//		fb.put(Gray);
+//		gl.glTexParameterfv(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_BORDER_COLOR, fb);
 //
-//		gl.glGenTextures(3, bump); // Create Three Textures
+//		gl.glGenTextures(3, bump, 0); // Create Three Textures
 //
 //		gl.glBindTexture(GL.GL_TEXTURE_2D, bump[0]); // Create Nearest Filtered
 //														// Texture
@@ -360,7 +404,7 @@
 //		gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER,
 //				GL.GL_NEAREST);
 //		gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGB8, image.width,
-//				image.height, 0, GL.GL_RGB, GL.GL_UNSIGNED_BYTE, image.data);
+//				image.height, 0, GL.GL_RGB, GL.GL_UNSIGNED_BYTE, bb);
 //
 //		gl.glBindTexture(GL.GL_TEXTURE_2D, bump[1]); // Create Linear Filtered
 //														// Texture
@@ -369,7 +413,7 @@
 //		gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER,
 //				GL.GL_LINEAR);
 //		gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGB8, image.width,
-//				image.height, 0, GL.GL_RGB, GL.GL_UNSIGNED_BYTE, image.data);
+//				image.height, 0, GL.GL_RGB, GL.GL_UNSIGNED_BYTE, bb);
 //
 //		gl.glBindTexture(GL.GL_TEXTURE_2D, bump[2]); // Create MipMapped Texture
 //		gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER,
@@ -377,13 +421,15 @@
 //		gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER,
 //				GL.GL_LINEAR_MIPMAP_NEAREST);
 //		glu.gluBuild2DMipmaps(GL.GL_TEXTURE_2D, GL.GL_RGB8, image.width,
-//				image.height, GL.GL_RGB, GL.GL_UNSIGNED_BYTE, image.data);
+//				image.height, GL.GL_RGB, GL.GL_UNSIGNED_BYTE, bb);
 //
-//		for (int i = 0; i < image.data.length; i++)
+//		for (int i = 0; i < image.data.length; i++) {
 //			// Invert The Bumpmap
 //			image.data[i] = (byte) (255 - image.data[i]);
+//			bb.put(i,(byte) (255 - bb.get(i)));
+//		}
 //
-//		gl.glGenTextures(3, invbump); // Create Three Textures
+//		gl.glGenTextures(3, invbump, 0); // Create Three Textures
 //
 //		gl.glBindTexture(GL.GL_TEXTURE_2D, invbump[0]); // Create Nearest
 //														// Filtered Texture
@@ -392,7 +438,7 @@
 //		gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER,
 //				GL.GL_NEAREST);
 //		gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGB8, image.width,
-//				image.height, 0, GL.GL_RGB, GL.GL_UNSIGNED_BYTE, image.data);
+//				image.height, 0, GL.GL_RGB, GL.GL_UNSIGNED_BYTE, bb);
 //
 //		gl.glBindTexture(GL.GL_TEXTURE_2D, invbump[1]); // Create Linear
 //														// Filtered Texture
@@ -401,7 +447,7 @@
 //		gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER,
 //				GL.GL_LINEAR);
 //		gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGB8, image.width,
-//				image.height, 0, GL.GL_RGB, GL.GL_UNSIGNED_BYTE, image.data);
+//				image.height, 0, GL.GL_RGB, GL.GL_UNSIGNED_BYTE, bb);
 //
 //		gl.glBindTexture(GL.GL_TEXTURE_2D, invbump[2]); // Create MipMapped
 //														// Texture
@@ -410,7 +456,7 @@
 //		gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER,
 //				GL.GL_LINEAR_MIPMAP_NEAREST);
 //		glu.gluBuild2DMipmaps(GL.GL_TEXTURE_2D, GL.GL_RGB8, image.width,
-//				image.height, GL.GL_RGB, GL.GL_UNSIGNED_BYTE, image.data);
+//				image.height, GL.GL_RGB, GL.GL_UNSIGNED_BYTE, bb);
 //
 //		gl.glPixelTransferf(GL.GL_RED_SCALE, 1.0f); // Scale RGB Back To 100%
 //													// Again
@@ -419,7 +465,7 @@
 //
 //		image.destroy();
 //
-//		image.generateTextureInfo("Data/OpenGL_Alpha.bmp", true); // Load The
+//		image.generateTextureInfo("src/main/java/nehe/lesson22/data/OpenGL_Alpha.bmp", true); // Load The
 //																	// Logo-Pngs
 //		alpha = new byte[image.data.length]; // Create Memory For RGBA8-Texture
 //
@@ -427,7 +473,7 @@
 //			alpha[a + 3] = image.data[a]; // Pick Only Red Value As Alpha!
 //
 //		image.destroy();
-//		image.generateTextureInfo("Data/OpenGL.bmp", true);
+//		image.generateTextureInfo("src/main/java/nehe/lesson22/data/OpenGL.bmp", true);
 //
 //		for (int a = 0; a < image.data.length; a += 4) {
 //			alpha[a] = image.data[a]; // R
@@ -435,7 +481,7 @@
 //			alpha[a + 2] = image.data[a + 2]; // B
 //		}
 //
-//		gl.glGenTextures(1, glLogo); // Create One Textures
+//		gl.glGenTextures(1, glLogo, 0); // Create One Textures
 //
 //		gl.glBindTexture(GL.GL_TEXTURE_2D, glLogo[0]); // Create Linear Filtered
 //														// RGBA8-Texture
@@ -443,13 +489,16 @@
 //				GL.GL_LINEAR);
 //		gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER,
 //				GL.GL_LINEAR);
+//		
+//		bb = ByteBuffer.allocate(alpha.length);
+//		bb.put(alpha);
 //		gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGBA8, image.width,
-//				image.height, 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, alpha);
+//				image.height, 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, bb);//alpha);
 //
 //		alpha = null;
 //		image.destroy();
 //
-//		image.generateTextureInfo("Data/Multi_On_Alpha.bmp", true);// Load The
+//		image.generateTextureInfo("src/main/java/nehe/lesson22/data/Multi_On_Alpha.bmp", true);// Load The
 //																	// "Extension Enabled"-Logo
 //		alpha = new byte[image.data.length]; // Create Memory For RGBA8-Texture
 //
@@ -457,7 +506,7 @@
 //			alpha[a + 3] = image.data[a]; // Pick Only Red Value As Alpha!
 //
 //		image.destroy();
-//		image.generateTextureInfo("Data/Multi_On.bmp", true);
+//		image.generateTextureInfo("src/main/java/nehe/lesson22/data/Multi_On.bmp", true);
 //
 //		for (int a = 0; a < image.data.length; a += 4) {
 //			alpha[a] = image.data[a]; // R
@@ -465,7 +514,7 @@
 //			alpha[a + 2] = image.data[a + 2]; // B
 //		}
 //
-//		gl.glGenTextures(1, multiLogo); // Create One Textures
+//		gl.glGenTextures(1, multiLogo, 0); // Create One Textures
 //		gl.glBindTexture(GL.GL_TEXTURE_2D, multiLogo[0]); // Create Linear
 //															// Filtered
 //															// RGBA8-Texture
@@ -474,7 +523,7 @@
 //		gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER,
 //				GL.GL_LINEAR);
 //		gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGBA8, image.width,
-//				image.height, 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, alpha);
+//				image.height, 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, bb);//alpha);
 //
 //		alpha = null;
 //		image.destroy();
@@ -615,7 +664,11 @@
 //		gl.glRotatef(-yrot, 0.0f, 1.0f, 0.0f);
 //		gl.glRotatef(-xrot, 1.0f, 0.0f, 0.0f);
 //		gl.glTranslatef(0.0f, 0.0f, -z);
-//		gl.glGetFloatv(GL.GL_MODELVIEW_MATRIX, Minv);
+//		
+//		FloatBuffer fb = FloatBuffer.allocate(Minv.length);
+//		gl.glGetFloatv(GL.GL_MODELVIEW_MATRIX, fb);
+//		for(int z = 0;z < fb.capacity();z++){Minv[z] = fb.get(z);}
+//		
 //		gl.glLoadIdentity();
 //		gl.glTranslatef(0.0f, 0.0f, z);
 //
@@ -815,7 +868,11 @@
 //		gl.glRotatef(-yrot, 0.0f, 1.0f, 0.0f);
 //		gl.glRotatef(-xrot, 1.0f, 0.0f, 0.0f);
 //		gl.glTranslatef(0.0f, 0.0f, -z);
-//		gl.glGetFloatv(GL.GL_MODELVIEW_MATRIX, Minv);
+//
+//		FloatBuffer fb = FloatBuffer.allocate(Minv.length);
+//		gl.glGetFloatv(GL.GL_MODELVIEW_MATRIX, fb);
+//		for(int z = 0;z < fb.capacity();z++){Minv[z] = fb.get(z);}
+//		
 //		gl.glLoadIdentity();
 //		gl.glTranslatef(0.0f, 0.0f, z);
 //
@@ -837,19 +894,23 @@
 //		 */
 //
 //		// TEXTURE-UNIT #0
-//		gl.glActiveTextureARB(GL.GL_TEXTURE0_ARB);
+//		// trungnd10
+////		gl.glActiveTextureARB(GL.GL_TEXTURE0_ARB);
+//		gl.glActiveTexture(GL.GL_TEXTURE0);
 //		gl.glEnable(GL.GL_TEXTURE_2D);
 //		gl.glBindTexture(GL.GL_TEXTURE_2D, bump[filter]);
 //		gl.glTexEnvf(GL.GL_TEXTURE_ENV, GL.GL_TEXTURE_ENV_MODE,
-//				GL.GL_COMBINE_EXT);
-//		gl.glTexEnvf(GL.GL_TEXTURE_ENV, GL.GL_COMBINE_RGB_EXT, GL.GL_REPLACE);
+//				GL.GL_COMBINE/*_EXT*/);
+//		gl.glTexEnvf(GL.GL_TEXTURE_ENV, GL.GL_COMBINE_RGB/*_EXT*/, GL.GL_REPLACE);
 //		// TEXTURE-UNIT #1:
-//		gl.glActiveTextureARB(GL.GL_TEXTURE1_ARB);
+//		// trungnd10
+//		//gl.glActiveTextureARB(GL.GL_TEXTURE1_ARB);
+//		gl.glActiveTexture(GL.GL_TEXTURE1);
 //		gl.glEnable(GL.GL_TEXTURE_2D);
 //		gl.glBindTexture(GL.GL_TEXTURE_2D, invbump[filter]);
 //		gl.glTexEnvf(GL.GL_TEXTURE_ENV, GL.GL_TEXTURE_ENV_MODE,
-//				GL.GL_COMBINE_EXT);
-//		gl.glTexEnvf(GL.GL_TEXTURE_ENV, GL.GL_COMBINE_RGB_EXT, GL.GL_ADD);
+//				GL.GL_COMBINE/*_EXT*/);
+//		gl.glTexEnvf(GL.GL_TEXTURE_ENV, GL.GL_COMBINE_RGB/*_EXT*/, GL.GL_ADD);
 //		// General Switches:
 //		gl.glDisable(GL.GL_BLEND);
 //		gl.glDisable(GL.GL_LIGHTING);
@@ -872,9 +933,16 @@
 //			c[1] = data[5 * i + 3];
 //			c[2] = data[5 * i + 4];
 //			SetUpBumps(n, c, l, s, t);
-//			gl.glMultiTexCoord2fARB(GL.GL_TEXTURE0_ARB, data[5 * i],
+//			
+//			// trungnd10
+////			gl.glMultiTexCoord2fARB(GL.GL_TEXTURE0_ARB, data[5 * i],
+////					data[5 * i + 1]);
+////			gl.glMultiTexCoord2fARB(GL.GL_TEXTURE1_ARB, data[5 * i] + c[0],
+////					data[5 * i + 1] + c[1]);
+//			
+//			gl.glMultiTexCoord2f(GL.GL_TEXTURE0, data[5 * i],
 //					data[5 * i + 1]);
-//			gl.glMultiTexCoord2fARB(GL.GL_TEXTURE1_ARB, data[5 * i] + c[0],
+//			gl.glMultiTexCoord2f(GL.GL_TEXTURE1, data[5 * i] + c[0],
 //					data[5 * i + 1] + c[1]);
 //			gl.glVertex3f(data[5 * i + 2], data[5 * i + 3], data[5 * i + 4]);
 //		}
@@ -895,9 +963,15 @@
 //			c[1] = data[5 * i + 3];
 //			c[2] = data[5 * i + 4];
 //			SetUpBumps(n, c, l, s, t);
-//			gl.glMultiTexCoord2fARB(GL.GL_TEXTURE0_ARB, data[5 * i],
+//			
+//			// trungnd10
+////			gl.glMultiTexCoord2fARB(GL.GL_TEXTURE0_ARB, data[5 * i],
+////					data[5 * i + 1]);
+////			gl.glMultiTexCoord2fARB(GL.GL_TEXTURE1_ARB, data[5 * i] + c[0],
+////					data[5 * i + 1] + c[1]);
+//			gl.glMultiTexCoord2f(GL.GL_TEXTURE0, data[5 * i],
 //					data[5 * i + 1]);
-//			gl.glMultiTexCoord2fARB(GL.GL_TEXTURE1_ARB, data[5 * i] + c[0],
+//			gl.glMultiTexCoord2f(GL.GL_TEXTURE1, data[5 * i] + c[0],
 //					data[5 * i + 1] + c[1]);
 //			gl.glVertex3f(data[5 * i + 2], data[5 * i + 3], data[5 * i + 4]);
 //		}
@@ -918,9 +992,16 @@
 //			c[1] = data[5 * i + 3];
 //			c[2] = data[5 * i + 4];
 //			SetUpBumps(n, c, l, s, t);
-//			gl.glMultiTexCoord2fARB(GL.GL_TEXTURE0_ARB, data[5 * i],
+//
+//			// trungnd10
+////			gl.glMultiTexCoord2fARB(GL.GL_TEXTURE0_ARB, data[5 * i],
+////					data[5 * i + 1]);
+////			gl.glMultiTexCoord2fARB(GL.GL_TEXTURE1_ARB, data[5 * i] + c[0],
+////					data[5 * i + 1] + c[1]);
+//			
+//			gl.glMultiTexCoord2f(GL.GL_TEXTURE0, data[5 * i],
 //					data[5 * i + 1]);
-//			gl.glMultiTexCoord2fARB(GL.GL_TEXTURE1_ARB, data[5 * i] + c[0],
+//			gl.glMultiTexCoord2f(GL.GL_TEXTURE1, data[5 * i] + c[0],
 //					data[5 * i + 1] + c[1]);
 //			gl.glVertex3f(data[5 * i + 2], data[5 * i + 3], data[5 * i + 4]);
 //		}
@@ -941,9 +1022,16 @@
 //			c[1] = data[5 * i + 3];
 //			c[2] = data[5 * i + 4];
 //			SetUpBumps(n, c, l, s, t);
-//			gl.glMultiTexCoord2fARB(GL.GL_TEXTURE0_ARB, data[5 * i],
+//			
+//			// trungnd10
+////			gl.glMultiTexCoord2fARB(GL.GL_TEXTURE0_ARB, data[5 * i],
+////					data[5 * i + 1]);
+////			gl.glMultiTexCoord2fARB(GL.GL_TEXTURE1_ARB, data[5 * i] + c[0],
+////					data[5 * i + 1] + c[1]);
+//			
+//			gl.glMultiTexCoord2f(GL.GL_TEXTURE0, data[5 * i],
 //					data[5 * i + 1]);
-//			gl.glMultiTexCoord2fARB(GL.GL_TEXTURE1_ARB, data[5 * i] + c[0],
+//			gl.glMultiTexCoord2f(GL.GL_TEXTURE1, data[5 * i] + c[0],
 //					data[5 * i + 1] + c[1]);
 //			gl.glVertex3f(data[5 * i + 2], data[5 * i + 3], data[5 * i + 4]);
 //		}
@@ -964,9 +1052,16 @@
 //			c[1] = data[5 * i + 3];
 //			c[2] = data[5 * i + 4];
 //			SetUpBumps(n, c, l, s, t);
-//			gl.glMultiTexCoord2fARB(GL.GL_TEXTURE0_ARB, data[5 * i],
+//			
+//			// trungnd10
+////			gl.glMultiTexCoord2fARB(GL.GL_TEXTURE0_ARB, data[5 * i],
+////					data[5 * i + 1]);
+////			gl.glMultiTexCoord2fARB(GL.GL_TEXTURE1_ARB, data[5 * i] + c[0],
+////					data[5 * i + 1] + c[1]);
+//			
+//			gl.glMultiTexCoord2f(GL.GL_TEXTURE0, data[5 * i],
 //					data[5 * i + 1]);
-//			gl.glMultiTexCoord2fARB(GL.GL_TEXTURE1_ARB, data[5 * i] + c[0],
+//			gl.glMultiTexCoord2f(GL.GL_TEXTURE1, data[5 * i] + c[0],
 //					data[5 * i + 1] + c[1]);
 //			gl.glVertex3f(data[5 * i + 2], data[5 * i + 3], data[5 * i + 4]);
 //		}
@@ -987,9 +1082,16 @@
 //			c[1] = data[5 * i + 3];
 //			c[2] = data[5 * i + 4];
 //			SetUpBumps(n, c, l, s, t);
-//			gl.glMultiTexCoord2fARB(GL.GL_TEXTURE0_ARB, data[5 * i],
+//			
+//			// trungnd10
+////			gl.glMultiTexCoord2fARB(GL.GL_TEXTURE0_ARB, data[5 * i],
+////					data[5 * i + 1]);
+////			gl.glMultiTexCoord2fARB(GL.GL_TEXTURE1_ARB, data[5 * i] + c[0],
+////					data[5 * i + 1] + c[1]);
+//			
+//			gl.glMultiTexCoord2f(GL.GL_TEXTURE0, data[5 * i],
 //					data[5 * i + 1]);
-//			gl.glMultiTexCoord2fARB(GL.GL_TEXTURE1_ARB, data[5 * i] + c[0],
+//			gl.glMultiTexCoord2f(GL.GL_TEXTURE1, data[5 * i] + c[0],
 //					data[5 * i + 1] + c[1]);
 //			gl.glVertex3f(data[5 * i + 2], data[5 * i + 3], data[5 * i + 4]);
 //		}
@@ -1000,9 +1102,14 @@
 //		 * (Multiplies By 2) Lighting Enabled No Offset Texture-Coordinates
 //		 */
 //
-//		gl.glActiveTextureARB(GL.GL_TEXTURE1_ARB);
+//		// trungnd10
+////		gl.glActiveTextureARB(GL.GL_TEXTURE1_ARB);
+////		gl.glDisable(GL.GL_TEXTURE_2D);
+////		gl.glActiveTextureARB(GL.GL_TEXTURE0_ARB);
+//
+//		gl.glActiveTexture(GL.GL_TEXTURE1);
 //		gl.glDisable(GL.GL_TEXTURE_2D);
-//		gl.glActiveTextureARB(GL.GL_TEXTURE0_ARB);
+//		gl.glActiveTexture(GL.GL_TEXTURE0);
 //
 //		if (!emboss) {
 //			gl.glTexEnvf(GL.GL_TEXTURE_ENV, GL.GL_TEXTURE_ENV_MODE,
@@ -1037,9 +1144,14 @@
 //		gl.glRotatef(xrot, 1.0f, 0.0f, 0.0f);
 //		gl.glRotatef(yrot, 0.0f, 1.0f, 0.0f);
 //
-//		gl.glActiveTextureARB(GL.GL_TEXTURE1_ARB);
+//		// trungnd10
+////		gl.glActiveTextureARB(GL.GL_TEXTURE1_ARB);
+////		gl.glDisable(GL.GL_TEXTURE_2D);
+////		gl.glActiveTextureARB(GL.GL_TEXTURE0_ARB);
+//		
+//		gl.glActiveTexture(GL.GL_TEXTURE1);
 //		gl.glDisable(GL.GL_TEXTURE_2D);
-//		gl.glActiveTextureARB(GL.GL_TEXTURE0_ARB);
+//		gl.glActiveTexture(GL.GL_TEXTURE0);
 //
 //		gl.glDisable(GL.GL_BLEND);
 //		gl.glBindTexture(GL.GL_TEXTURE_2D, texture[filter]);
