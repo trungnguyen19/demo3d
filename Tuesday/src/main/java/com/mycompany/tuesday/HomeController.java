@@ -1,4 +1,4 @@
-package com.trungnd10.th;
+package com.mycompany.tuesday;
 
 import java.text.DateFormat;
 import java.util.Date;
