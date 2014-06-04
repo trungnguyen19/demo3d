@@ -29,7 +29,6 @@ public class Constants {
 	}
 
 	public static String getEditLink(int id) {
-		System.out.println(Constants.getTranslateProperties("product_id"));
 		return "/tuesday/rest/hello/edit/id/" + id;
 	}
 
