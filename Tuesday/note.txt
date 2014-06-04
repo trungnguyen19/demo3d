@@ -1,0 +1,2 @@
+#Create database:
+create database mycompany character SET utf8;
