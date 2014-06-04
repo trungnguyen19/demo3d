@@ -67,7 +67,7 @@
 			<tr>
 				<td><label for="product_id"><%=Constants.getTranslateProperties("product_id")%>:</label></td>
 				<td><input type="text" size="35" maxlength="70"
-					name="product_id" id="txt_product_id" value="${productId}"></td>
+					name="product_id" id="txt_product_id" value="${productId}" disabled></td>
 			</tr>
 			<tr>
 				<td><label for="delivery_man_name"><%=Constants.getTranslateProperties("delivery_man_name")%>:</label></td>
