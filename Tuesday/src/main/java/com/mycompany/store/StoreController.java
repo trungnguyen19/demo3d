@@ -56,7 +56,7 @@ public class StoreController { // Jersey
 	@GET
 	@Path("/new")
 	public Response create(@Context HttpServletRequest request,
-			@PathParam("productId") String productIdString) {
+			@Context UriInfo uriInfo) {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		session.beginTransaction();
 		DeliveryDetail deliveryDetail = new DeliveryDetail();
@@ -71,12 +71,11 @@ public class StoreController { // Jersey
 		deliveryDetail.setState("");
 		deliveryDetail.setTelephoneNum("");
 
-		String output = "before:" + deliveryDetail.getProductId();
 		session.save(deliveryDetail);
-		output += "\n" + "after:" + deliveryDetail.getProductId();
-
 		session.getTransaction().commit();
-		return Response.status(200).entity(output).build();
+
+		URI uri = uriInfo.getBaseUriBuilder().path("hello/list").build();
+		return Response.seeOther(uri).build();
 	}
 
 	@GET

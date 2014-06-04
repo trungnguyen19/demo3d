@@ -11,8 +11,8 @@ public class Constants {
 	private static void loadTranslateProperties() {
 		translateProperties = new HashMap<String, String>();
 
-		ResourceBundle rb = ResourceBundle
-				.getBundle("com.mycompany.store.translate");
+		ResourceBundle rb = ResourceBundle.getBundle(
+				"com.mycompany.store.translate", new EncodedControl("UTF8"));
 		Enumeration<String> keys = rb.getKeys();
 		while (keys.hasMoreElements()) {
 			String key = keys.nextElement();
@@ -29,6 +29,7 @@ public class Constants {
 	}
 
 	public static String getEditLink(int id) {
+		System.out.println(Constants.getTranslateProperties("product_id"));
 		return "/tuesday/rest/hello/edit/id/" + id;
 	}
 
@@ -38,5 +39,9 @@ public class Constants {
 
 	public static String getSubmitLink() {
 		return "/tuesday/rest/hello/edit/submit";
+	}
+
+	public static String getCreateLink() {
+		return "/tuesday/rest/hello/new";
 	}
 }

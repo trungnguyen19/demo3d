@@ -9,7 +9,7 @@
 <title>List</title>
 </head>
 <body>
-	<h1>List</h1>
+	<h1><%=Constants.getTranslateProperties("list_title")%></h1>
 
 	<%
 		String file = request.getRequestURI();
@@ -22,6 +22,13 @@
 
 		List<DeliveryDetail> list = (List<DeliveryDetail>) request
 				.getAttribute("list");
+
+		reconstructedURL = new URL(request.getScheme(),
+				request.getServerName(), request.getServerPort(),
+				Constants.getCreateLink());
+		out.println("<h4><a href=\"" + reconstructedURL.toString() + "\">"
+				+ Constants.getTranslateProperties("create_new_record")
+				+ "</a></h4>");
 	%>
 
 	<table border="1">

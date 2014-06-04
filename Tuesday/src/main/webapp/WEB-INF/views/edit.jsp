@@ -48,77 +48,80 @@
 </script>
 </head>
 <body>
-	<h1>Edit</h1>
+	<h1><%=Constants.getTranslateProperties("edit_title")%></h1>
 	<!--
 	<div align="center">
 		<h2 style="color: #8e9182">Demo</h2>
 	</div>
 	-->
-    <%
-        URL reconstructedURL = new URL(request.getScheme(),
-                request.getServerName(), request.getServerPort(),
-                Constants.getSubmitLink());
-    String submitLink = reconstructedURL.toString();
-        %>
+	<%
+		URL reconstructedURL = new URL(request.getScheme(),
+				request.getServerName(), request.getServerPort(),
+				Constants.getSubmitLink());
+		String submitLink = reconstructedURL.toString();
+	%>
 
 	<form method="POST" name="data_entry" id="data_entry_frm"
-		action="<% out.print(submitLink); %>">
+		action="<%out.print(submitLink);%>">
 		<table cellspacing="5" cellpadding="0">
 			<tr>
-				<td><label for="product_id">Product Code (Id):</label></td>
+				<td><label for="product_id"><%=Constants.getTranslateProperties("product_id")%>:</label></td>
 				<td><input type="text" size="35" maxlength="70"
 					name="product_id" id="txt_product_id" value="${productId}"></td>
 			</tr>
 			<tr>
-				<td><label for="delivery_man_name">Delivery Man Name:</label></td>
+				<td><label for="delivery_man_name"><%=Constants.getTranslateProperties("delivery_man_name")%>:</label></td>
 				<td><input type="text" size="35" maxlength="70"
 					name="delivery_man_name" id="txt_delivery_man_name"
 					value="${deliveryManName}"></td>
 			</tr>
 			<tr>
-				<td><label for="telephone_num">Telephone Number:</label></td>
+				<td><label for="telephone_num"><%=Constants.getTranslateProperties("telephone_num")%>:</label></td>
 				<td><input type="text" size="35" maxlength="70"
 					name="telephone_num" id="txt_telephone_num" value="${telephoneNum}"></td>
 			</tr>
 			<tr>
-				<td><label for="product_name">Product Name:</label></td>
+				<td><label for="product_name"><%=Constants.getTranslateProperties("product_name")%>:</label></td>
 				<td><input type="text" size="35" maxlength="70"
 					name="product_name" id="txt_product_name" value="${productName}"></td>
 			</tr>
 			<tr>
-				<td><label for="product_information">Product
-						Information:</label></td>
+				<td><label for="product_information"><%=Constants.getTranslateProperties("product_information")%>:</label></td>
 				<td><textarea name="product_information"
 						id="txta_product_information" rows="3" cols="30">${productInformation}</textarea></td>
 			</tr>
 			<tr>
-				<td><label for="note">Note:</label></td>
+				<td><label for="note"><%=Constants.getTranslateProperties("note")%>:</label></td>
 				<td><textarea name="note" id="txta_note" rows="3" cols="30">${note}</textarea></td>
 			</tr>
 			<tr>
-				<td><label for="receiver_name">Receiver Name:</label></td>
+				<td><label for="receiver_name"><%=Constants.getTranslateProperties("receiver_name")%>:</label></td>
 				<td><input type="text" size="35" maxlength="70"
 					name="receiver_name" id="txt_receiver_name" value="${receiverName}"></td>
 			</tr>
 			<tr>
-				<td><label for="receive_date">Receiver Date:</label></td>
+				<td><label for="receive_date"><%=Constants.getTranslateProperties("receive_date")%>:</label></td>
 				<td><input type="text" size="35" maxlength="70"
 					name="receive_date" id="txt_receive_date" value="${receiveDate}"></td>
 			</tr>
 			<tr>
-				<td><label for="state">State:</label></td>
+				<td><label for="state"><%=Constants.getTranslateProperties("state")%>:</label></td>
 				<td><select name="state" id="slt_state">
 						<option value="">- Select -</option>
-						<% String goodValue = Constants.getTranslateProperties("good"); %>
+						<%
+							String goodValue = Constants.getTranslateProperties("good");
+						%>
 						<option value="<%=goodValue %>"
-							<c:if test="${state == goodValue}">selected="selected"</c:if>><%=goodValue %></option>
-                        <% String badValue = Constants.getTranslateProperties("bad"); %>
-                        <option value="<%=badValue %>"
-                            <c:if test="${state == badValue}">selected="selected"</c:if>><%=badValue %></option>
+							<c:if test="${state == goodValue}">selected="selected"</c:if>><%=goodValue%></option>
+						<%
+							String badValue = Constants.getTranslateProperties("bad");
+						%>
+						<option value="<%=badValue %>"
+							<c:if test="${state == badValue}">selected="selected"</c:if>><%=badValue%></option>
 				</select></td>
 			</tr>
 			<tr>
-				<td><label for="expiry_date">expiryDate:</label></td>
+				<td><label for="expiry_date"><%=Constants.getTranslateProperties("expiry_date")%>:</label></td>
 				<td><input type="text" size="35" maxlength="70"
 					name="expiry_date" id="txt_expiry_date" value="${expiryDate}"></td>
 			</tr>
@@ -165,8 +168,8 @@
 		reconstructedURL = new URL(request.getScheme(),
 				request.getServerName(), request.getServerPort(),
 				Constants.getListLink());
-		out.print("<a href=\"" + reconstructedURL.toString()
-				+ "\">List</a>");
+		out.print("<a href=\"" + reconstructedURL.toString() + "\">"
+				+ Constants.getTranslateProperties("list_title") + "</a>");
 	%>
 
 </body>
