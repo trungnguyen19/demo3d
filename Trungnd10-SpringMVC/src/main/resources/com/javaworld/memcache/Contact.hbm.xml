@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="com.javaworld.memcache">
+
+    <class name="Contact" table="CONTACT"  >
+   
+        <id name="contactId" column="CONTACTID">
+            <generator class="increment"/>
+        </id>
+        <property name="firstName" column="FIRSTNAME"/>
+        <property name="lastName" column="LASTNAME"/>
+        <property name="email" column="EMAIl"/>
+    </class>
+
+</hibernate-mapping>
