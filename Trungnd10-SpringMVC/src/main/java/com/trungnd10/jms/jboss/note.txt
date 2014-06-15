@@ -1,0 +1,6 @@
+// Add to file: /data/os/jboss/jboss-4.2.2.GA/server/default/deploy/jms/jbossmq-destinations-service.xml
+
+<mbean code="org.jboss.mq.server.jmx.Topic"
+     name="jboss.mq.destination:service=Topic,name=topicA">
+    <depends optional-attribute-name="DestinationManager">jboss.mq:service=DestinationManager</depends>
+</mbean>

@@ -39,6 +39,18 @@ public class EmployeeEntity implements Serializable {
 	@JoinColumn(name="ACCOUNT_ID")
 	private AccountEntity account;
 
+	// use for select new (hql)
+	public EmployeeEntity(Integer employeeId,String email,String firstName,String lastName,AccountEntity account) {
+		this.employeeId = employeeId;
+		this.email = email;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.account = account;
+	}
+	public EmployeeEntity() {
+	}
+	// use for select new (hql)
+	
 	public Integer getEmployeeId() {
 		return employeeId;
 	}
