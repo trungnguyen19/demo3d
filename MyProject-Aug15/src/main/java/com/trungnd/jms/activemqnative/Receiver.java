@@ -1,50 +1,50 @@
-package com.trungnd.jms;
+package com.trungnd.jms.activemqnative;
 
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 import javax.jms.JMSException;
-import javax.jms.MessageProducer;
+import javax.jms.Message;
+import javax.jms.MessageConsumer;
 import javax.jms.Session;
 import javax.jms.TextMessage;
 import org.apache.activemq.ActiveMQConnection;
 import org.apache.activemq.ActiveMQConnectionFactory;
 
-public class Sender {
-
+public class Receiver {
 	private ConnectionFactory factory = null;
 	private Connection connection = null;
 	private Session session = null;
 	private Destination destination = null;
-	private MessageProducer producer = null;
+	private MessageConsumer consumer = null;
 
-	public Sender() {
+	public Receiver() {
 
 	}
 
-	public void sendMessage() {
-
+	public void receiveMessage() {
 		try {
 			factory = new ActiveMQConnectionFactory(
 					ActiveMQConnection.DEFAULT_BROKER_URL);
 			connection = factory.createConnection();
+			connection = factory.createConnection();
 			connection.start();
 			session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 			destination = session.createQueue("SAMPLEQUEUE");
-			producer = session.createProducer(destination);
-			TextMessage message = session.createTextMessage();
-			message.setText("Hello ...This is a sample message..sending from FirstClient");
-			producer.send(message);
-			System.out.println("Sent: " + message.getText());
+			consumer = session.createConsumer(destination);
+			Message message = consumer.receive();
 
+			if (message instanceof TextMessage) {
+				TextMessage text = (TextMessage) message;
+				System.out.println("Message is : " + text.getText());
+			}
 		} catch (JMSException e) {
 			e.printStackTrace();
 		}
 	}
 
 	public static void main(String[] args) {
-		Sender sender = new Sender();
-		sender.sendMessage();
+		Receiver receiver = new Receiver();
+		receiver.receiveMessage();
 	}
-
 }
